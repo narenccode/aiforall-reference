@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Session 1 Reference · Art of Prompt Engineering</title>
+<style>
+:root{--ink:#0F1A1F;--ink2:#3B474D;--paper:#F7F5EF;--card:#FFFFFF;--line:#D9D3C5;--soft:#EFEBE1;--green:#0B5D47;--gold:#C9952B;--goldsoft:#F7EBCD;--red:#9E2B25}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.6 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px 64px}
+header{border-bottom:4px solid var(--gold);background:var(--ink);color:var(--paper);padding:28px 0 22px}
+header .wrap{padding-bottom:0}
+header p{margin:0;color:#C9D1CF;font-size:15px}
+h1{font:600 clamp(28px,6vw,40px)/1.15 Newsreader,Georgia,"Times New Roman",serif;margin:6px 0 8px}
+h2{font:600 clamp(24px,5vw,30px)/1.2 Newsreader,Georgia,"Times New Roman",serif;margin:0 0 6px}
+h3{font-size:18px;margin:26px 0 8px;color:var(--green)}
+nav{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:24px 0}
+nav p{margin:0 0 6px;font-weight:600}
+nav ol{margin:0;padding-left:22px;columns:2;column-gap:28px}
+nav li{break-inside:avoid;padding:2px 0}
+nav li.later{color:var(--ink2)}
+a{color:var(--green)}
+section{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--green);border-radius:10px;padding:22px 20px;margin:22px 0;scroll-margin-top:12px}
+section.concept{border-top-color:var(--gold)}
+.kicker{margin:0 0 4px;font:600 13px/1.3 "IBM Plex Mono",Consolas,monospace;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2)}
+.kicker .tag{display:inline-block;background:var(--green);color:#fff;border-radius:4px;padding:1px 7px;margin-right:6px}
+section.concept .kicker .tag{background:var(--gold);color:var(--ink)}
+.intro{margin:0 0 8px;color:var(--ink2)}
+ol.steps{padding-left:0;list-style:none;counter-reset:s;margin:10px 0}
+ol.steps>li{counter-increment:s;position:relative;padding:6px 0 6px 40px}
+ol.steps>li::before{content:counter(s);position:absolute;left:0;top:6px;width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--paper);font:600 14px/28px "IBM Plex Mono",monospace;text-align:center}
+ul.plain{padding-left:20px}
+code{font:15px "IBM Plex Mono",Consolas,monospace;background:var(--soft);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+.note{margin:8px 0;padding:8px 12px;background:var(--soft);border-radius:6px}
+.callout{border-left:4px solid var(--green);background:#EEF4F1;border-radius:6px;padding:10px 14px;margin:14px 0}
+.callout.gold{border-left-color:var(--gold);background:var(--goldsoft)}
+.callout p{margin:4px 0}
+.clabel{font:600 13px "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.04em}
+.box{border:1px solid var(--line);border-radius:8px;margin:16px 0;background:#FBFAF6;overflow:hidden}
+.boxhead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px 8px 14px;background:var(--soft);border-bottom:1px solid var(--line)}
+.boxlabel{font-weight:600;font-size:15px}
+.boxnote{margin:0;padding:8px 14px 0;font-size:15px;color:var(--ink2)}
+pre{margin:0;padding:12px 14px;max-height:420px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.55 "IBM Plex Mono",Consolas,monospace}
+button.copy{flex:none;border:0;border-radius:6px;background:var(--green);color:#fff;font:600 15px "IBM Plex Sans",system-ui,sans-serif;padding:7px 16px;cursor:pointer;min-height:36px}
+button.copy.done{background:var(--ink)}
+details{margin:16px 0;border:1px solid var(--line);border-radius:8px;padding:10px 14px;background:#FBFAF6}
+summary{cursor:pointer;font-weight:600}
+details p{margin:8px 0}
+.test{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.test>div{border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.test .n{display:inline-block;width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font:600 12px/22px "IBM Plex Mono",monospace;text-align:center;margin-right:6px}
+.test b{font-size:14px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2)}
+.test p{margin:6px 0 0}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:16px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--soft);font-size:14px;text-transform:uppercase;letter-spacing:.03em}
+.bars{margin:12px 0}
+.bar{display:grid;grid-template-columns:110px 1fr 52px;align-items:center;gap:10px;margin:6px 0}
+.bar span:nth-child(2){height:16px;background:var(--green);border-radius:3px}
+.bar.low span:nth-child(2){background:#9DB8AE}
+.rings{list-style:none;padding:0;margin:12px 0}
+.rings li{border:2px solid var(--green);border-radius:10px;padding:8px 12px;margin:6px 0}
+.rings li:nth-child(2){margin-left:16px}.rings li:nth-child(3){margin-left:32px}.rings li:nth-child(4){margin-left:48px}.rings li:nth-child(5){margin-left:64px;background:var(--goldsoft);border-color:var(--gold)}
+.rings small{display:block;color:var(--ink2)}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.flow span{background:var(--soft);border-radius:6px;padding:4px 10px;font-size:15px}
+.flow i{font-style:normal;color:var(--ink2)}
+.next{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:18px 0 0;padding-top:12px;border-top:1px dashed var(--line);font-size:15px}
+.sample{background:var(--goldsoft);border:1px dashed var(--gold);border-radius:8px;padding:8px 12px;margin:16px 0 0;font-size:15px}
+footer{color:var(--ink2);font-size:14px;text-align:center}
+@media (max-width:600px){nav ol{columns:1}.test{grid-template-columns:1fr}section{padding:18px 14px}.rings li{margin-left:0!important}.bar{grid-template-columns:90px 1fr 46px}}
+</style>
+<style>nav ol{list-style:none;counter-reset:n}nav li:not(.sub){counter-increment:n}nav li:not(.sub)::before{content:counter(n) ". ";color:var(--ink-2,#3B474D)}nav li.sub{margin-left:18px;font-size:15px}.next{flex-direction:column;align-items:flex-start;gap:6px}td:first-child{min-width:5.5em}td,th{overflow-wrap:break-word;vertical-align:top}@media (max-width:600px){table{display:block;overflow-x:auto;font-size:15px}th,td{min-width:110px}}.presenter-card{display:inline-block;margin:14px 0 4px;padding:10px 16px;border-left:4px solid var(--gold);background:rgba(255,255,255,.08);border-radius:6px}.presenter-card p{margin:0}.pc-lab{font:500 12px/16px ui-monospace,Consolas,monospace;letter-spacing:.14em;text-transform:uppercase;opacity:.8}.pc-name{font-weight:700;font-size:20px;line-height:28px}.pc-role{font-size:16px;line-height:22px;opacity:.9}@media print{nav,button.copy,p.top{display:none}section{break-inside:avoid;border-top-width:2px}details{display:block}details>*{display:block}}</style>
+</head>
+<body id="top">
+<header><div class="wrap">
+  <p>The Augmented Academic · MSRUAS · Session 1</p>
+  <h1>Art of Prompt Engineering</h1>
+  <p>Participant reference: every activity and every idea from the session, in one file. It works offline. All data is synthetic.</p>
+  <div class="presenter-card"><p class="pc-lab">Presenter</p><p class="pc-name">Dr. C. Narendra Babu</p><p class="pc-role">Professor and Head - Department of CSE, FET-RUAS</p></div>
+</div></header>
+<main class="wrap">
+<nav aria-label="Sections"><p>Jump to</p><ol>
+  <li><a href="#start">Start here</a></li>
+  <li><a href="#today">Today: ten activities</a></li>
+  <li><a href="#s4">Activity 1 · Same question twice</a></li>
+  <li class="sub"><a href="#s5">· Why the answer changes</a></li>
+  <li class="sub"><a href="#s6">· One part of AI</a></li>
+  <li class="sub"><a href="#s7">· Where your data goes</a></li>
+  <li><a href="#s8">Activity 2 · Our rule</a></li>
+  <li class="sub"><a href="#s9">· Where to use AI</a></li>
+  <li class="sub"><a href="#s10">· What may go into an AI tool</a></li>
+  <li><a href="#s11">Activity 3 · References</a></li>
+  <li class="sub"><a href="#s12">· Fluent does not mean correct</a></li>
+  <li><a href="#s13">Activity 4 · How do you know?</a></li>
+  <li class="sub"><a href="#s14">· The five checks</a></li>
+  <li class="sub"><a href="#s15">· Practice: which line would you not sign?</a></li>
+  <li class="sub"><a href="#s16">· How much checking?</a></li>
+  <li><a href="#s17">Activity 5 · Fix the brief</a></li>
+  <li class="sub"><a href="#s18">· 6C: six parts of a good brief</a></li>
+  <li class="sub"><a href="#s19">· 6C on a real board note</a></li>
+  <li><a href="#s20">Activity 6 · Three offices</a></li>
+  <li class="sub"><a href="#s21">· Examples work only for what they show</a></li>
+  <li class="sub"><a href="#s22">· With 2,000 items, a rule for unclear cases</a></li>
+  <li><a href="#s23">Activity 7 · A rule we don’t have</a></li>
+  <li class="sub"><a href="#s24">· Working with documents</a></li>
+  <li class="sub"><a href="#s25">· A context pack</a></li>
+  <li><a href="#s26">Activity 8 · Three parents</a></li>
+  <li class="sub"><a href="#s27">· Self-review: a checklist, not “make it better”</a></li>
+  <li><a href="#s28">Activity 9 · For and against</a></li>
+  <li class="sub"><a href="#s29">· Nine prompt patterns</a></li>
+  <li><a href="#s30">Activity 10 · Your Monday brief</a></li>
+  <li><a href="#s31">Close · Ten activities, ten take-aways</a></li>
+  <li><a href="#s32">Close · Your adoption plan</a></li>
+  <li><a href="#s33">Bonus · The prompt challenge</a></li>
+  <li><a href="#optional">Optional activities</a></li>
+  <li><a href="#o1">Optional · Two roles, one policy</a></li>
+  <li><a href="#o3">Optional · Ask three times</a></li>
+  <li><a href="#o4">Optional · Final challenge: the board note</a></li>
+  <li><a href="#deeper">Go deeper</a></li>
+  <li class="sub"><a href="#g1">· How the model works</a></li>
+  <li class="sub"><a href="#g2">· When AI starts to act for you</a></li>
+  <li class="sub"><a href="#g3">· When no examples are needed</a></li>
+  <li class="sub"><a href="#g4">· Images and context</a></li>
+  <li class="sub"><a href="#g5">· Reviewing and asking twice</a></li>
+  <li class="sub"><a href="#g6">· Staged work and comparison</a></li>
+  <li class="sub"><a href="#g7">· Roles and cases</a></li>
+  <li><a href="#homework">Homework</a></li>
+  <li><a href="#card">The 6C card</a></li>
+</ol></nav>
+
+<section id="start" data-nav="Start here">
+  <p class="kicker">Start here</p>
+  <h2>How to use this page</h2>
+  <p class="intro">Today is ten short experiments. In each one you give the AI a prompt, change one thing, and watch what it does. Then we look at why it behaves that way.</p>
+  <h3>From asking to directing</h3>
+  <p>You already brief consultants, staff and committees; AI needs the same discipline: a clear brief, your context and your review, because unlike a person it rarely says ‘I don’t know’ and may invent details.</p>
+  <h3>The rhythm of every activity</h3>
+  <div class="flow"><span>Do it</span><i>→</i><span>Take-away</span><i>→</i><span>Why it works</span><i>→</i><span>Next activity</span></div>
+  <h3>The rules for every activity</h3>
+  <ol class="steps">
+    <li><b>Use Copilot Chat</b> with the <b>Work</b> badge showing (university account). Gemini works too.</li>
+    <li><b>Start a new chat</b> for each run, so the AI has no memory of the last one.</li>
+    <li><b>Prompt and data in one go:</b> copy the whole box, paste it, send once. The AI cannot see the slide.</li>
+    <li><b>Synthetic data only.</b> Every rule, table and email here is invented for practice. Never paste real student or staff data.</li>
+  </ol>
+  <p class="note">Each activity has a closed section, <b>“What it showed”</b>. Open it after the activity, not before: the surprise is part of the learning.</p>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="today" data-nav="Today: ten activities">
+  <p class="kicker">Today</p>
+  <h2>Ten experiments on how AI behaves</h2>
+  <table>
+    <thead><tr><th>#</th><th>Activity</th><th>What we do</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><b>Same question twice</b></td><td>We ask the same question in two new chats and compare the two numbers.</td></tr>
+      <tr><td>2</td><td><b>Our rule</b></td><td>We give it one of our rules and see what it adds where the rule is silent.</td></tr>
+      <tr><td>3</td><td><b>References</b></td><td>We check four AI-written references in Google Scholar to see which are real.</td></tr>
+      <tr><td>4</td><td><b>How do you know?</b></td><td>We test whether an AI analysis can show where each of its claims comes from.</td></tr>
+      <tr><td>5</td><td><b>Fix the brief</b></td><td>We ask for a policy summary, then add five lines to the request and compare.</td></tr>
+      <tr><td>6</td><td><b>Three offices</b></td><td>Three groups give the same instruction with different examples and compare.</td></tr>
+      <tr><td>7</td><td><b>A rule we don’t have</b></td><td>We ask it to explain a rule we do not have and see whether it invents one.</td></tr>
+      <tr><td>8</td><td><b>Three parents</b></td><td>We ask it to review one draft reply for three different parents and compare.</td></tr>
+      <tr><td>9</td><td><b>For and against</b></td><td>Half the room asks for reasons for a policy, half for reasons against.</td></tr>
+      <tr><td>10</td><td><b>Your Monday brief</b></td><td>You write a real brief for next week, and a colleague checks it.</td></tr>
+    </tbody>
+  </table>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s4" data-nav="Activity 1 · Same question twice">
+  <p class="kicker"><span class="tag">Activity 1 of 10</span>Do it · slide 4</p>
+  <h2>Ask the AI the same question twice</h2>
+  <p class="intro"><b>The situation:</b> A colleague needs one figure for a report: how many Indian students use AI for coursework. Everyone asks the AI in two new chats and compares the two numbers.</p>
+  <div class="test">
+    <div><span class="n">1</span><b>We are testing</b><p>Does the AI give the same number to the same question?</p></div>
+    <div><span class="n">2</span><b>The one difference</b><p>There is none: you send the same prompt in two fresh chats.</p></div>
+    <div><span class="n">3</span><b>Look for</b><p>Do your two numbers match?</p></div>
+  </div>
+  <h3>Steps</h3>
+  <ol class="steps">
+    <li>Open Copilot Chat and start a <b>new chat</b>.</li>
+    <li>Copy the prompt below, paste it and send. Write down the number.</li>
+    <li>Open a <b>second new chat</b>, paste the same prompt, send. Write down that number.</li>
+    <li>Call out both numbers when the presenter asks; they go on the room’s number line.</li>
+  </ol>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Prompt (paste it twice, in two new chats)</span><button class="copy" type="button" data-target="a-c1">Copy</button></div>
+  <pre id="a-c1">What percentage of Indian university students use AI tools for their coursework? Do not search the web; give your own estimate. Reply with one number only.</pre></div>
+  <details><summary>What it showed (open after the activity)</summary>
+    <p>The number moves. In our rehearsal, two fresh chats gave <b>86%</b>, then <b>70%</b>. Across a room the numbers spread even more.</p>
+    <p>The answer is a <b>sample</b>, not a fact looked up from somewhere.</p>
+    <div class="callout"><p class="clabel">Take-away</p><p>One run is a sample. Quote a figure only with a source.</p></div>
+  </details>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s5" class="concept" data-nav="· Why the answer changes">
+  <p class="kicker"><span class="tag">Activity 1</span>Why it works · slide 5</p>
+  <h2>Why the answer changes: the model predicts one word at a time</h2>
+  <p class="intro">An AI chatbot does not look up an answer. It writes one, a word at a time.</p>
+  <ol class="steps">
+    <li>It reads your prompt and everything written so far.</li>
+    <li>It gives every possible next word a score.</li>
+    <li>It picks one word, often the top one, sometimes another.</li>
+    <li>It adds that word and repeats, until the answer is complete.</li>
+  </ol>
+  <h3>Example · after “The committee recommends that the university …”</h3>
+  <div class="bars" role="img" aria-label="Next-word scores: review 38 percent, expand 24, postpone 14, invest 9, consult 6">
+    <div class="bar"><span>review</span><span style="width:76%"></span><span>38%</span></div>
+    <div class="bar low"><span>expand</span><span style="width:48%"></span><span>24%</span></div>
+    <div class="bar low"><span>postpone</span><span style="width:28%"></span><span>14%</span></div>
+    <div class="bar low"><span>invest</span><span style="width:18%"></span><span>9%</span></div>
+    <div class="bar low"><span>consult</span><span style="width:12%"></span><span>6%</span></div>
+  </div>
+  <p class="note">Scores are illustrative, not from a real model. Run it again and “expand” may win instead of “review”, and the whole answer goes another way.</p>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Ask the same question twice and you may get two different answers. Treat one run as a draft, not the answer, and check anything you will rely on.</p></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s6" class="concept" data-nav="· One part of AI">
+  <p class="kicker"><span class="tag">Activity 1</span>Background · slide 6</p>
+  <h2>You just used one part of AI</h2>
+  <p class="intro">Each circle sits inside the one before. Today’s focus is the newest.</p>
+  <ul class="rings">
+    <li><b>Artificial intelligence</b> · the broad field<small>Examples: GPS route planning and chess engines.</small></li>
+    <li><b>Machine learning</b> · learns patterns from data<small>Examples: spam filters and credit scoring.</small></li>
+    <li><b>Deep learning</b> · many-layered neural networks<small>Examples: face unlock and speech-to-text.</small></li>
+    <li><b>Generative AI</b> · creates new content<small>Examples: image, music and video generation.</small></li>
+    <li><b>Large language models (LLMs)</b> · today’s focus<small>Examples: ChatGPT, Gemini and Claude (Copilot uses OpenAI’s GPT models).</small></li>
+  </ul>
+  <h3>Why it feels sudden</h3>
+  <table>
+    <tbody>
+      <tr><td>1956</td><td>The term “artificial intelligence” is coined at Dartmouth.</td></tr>
+      <tr><td>1997</td><td>IBM’s Deep Blue beats world chess champion Kasparov.</td></tr>
+      <tr><td>2012</td><td>Deep learning wins the ImageNet vision contest.</td></tr>
+      <tr><td>2017</td><td>Google researchers publish the Transformer.</td></tr>
+      <tr><td>2022</td><td>ChatGPT puts an LLM in everyone’s hands.</td></tr>
+    </tbody>
+  </table>
+  <p class="note">AI is nearly seventy years old; LLMs reached the public only in late 2022.</p>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s7" class="concept" data-nav="· Where your data goes">
+  <p class="kicker"><span class="tag">Activity 1</span>Background · slide 7</p>
+  <h2>Where your data goes depends on which model you use</h2>
+  <p class="intro">The names behind the AI tools your staff and students already use, sorted by the question that matters: where does our data go?</p>
+  <table>
+    <thead><tr><th>Kind of model</th><th>Examples</th><th>What it means for you</th></tr></thead>
+    <tbody>
+      <tr><td><b>Closed</b>, used through an app or API</td><td>GPT (OpenAI), Gemini (Google), Claude (Anthropic)</td><td>Your text goes to the provider. Check the data terms: enterprise plans usually keep your data out of training.</td></tr>
+      <tr><td><b>Open weights</b>, download and run yourself</td><td>Llama (Meta), DeepSeek (China), Qwen (Alibaba), Mistral (France)</td><td>Can run on the university’s own servers. Data stays in-house, but you must host and secure it.</td></tr>
+      <tr><td><b>Small</b>, runs on your device</td><td>Gemini Nano, Apple on-device, Phi (Microsoft), Gemma (Google)</td><td>Private and low-cost, but weaker on complex analysis.</td></tr>
+      <tr><td><b>Built in India</b></td><td>Sarvam, BharatGen, Krutrim</td><td>Built for Indian languages; several are backed by the IndiaAI Mission. Sarvam also releases open-weight models.</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Names and versions change every few months. Positions are a guide, not a ranking.</p>
+  <div class="next"><span><b>Take-away from Activity 1:</b> One run is a sample. Quote a figure only with a source.</span><a href="#s8">Next · Activity 2: Our rule →</a></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s8" data-nav="Activity 2 · Our rule">
+  <p class="kicker"><span class="tag">Activity 2 of 10</span>Do it · slide 8</p>
+  <h2>Give the AI our rule, and see what it still guesses</h2>
+  <p class="intro"><b>The situation:</b> The hostel office asks the AI to draft a late-fee reminder and pastes our rule. We run it twice and look for anything the AI added that the rule does not say.</p>
+  <div class="test">
+    <div><span class="n">1</span><b>We are testing</b><p>When our rule leaves something out, does the AI say so, or fill it in?</p></div>
+    <div><span class="n">2</span><b>The one difference</b><p>Run 2 adds one line: <code>Use only this rule. Where it does not say how, write [check with office].</code></p></div>
+    <div><span class="n">3</span><b>Look for</b><p>Any phrase you cannot find in the rule.</p></div>
+  </div>
+  <h3>Steps</h3>
+  <ol class="steps">
+    <li>Start a new chat. Copy <b>Run 1</b> (the request and the rule together), paste it and send it.</li>
+    <li>Start another new chat. Copy <b>Run 2</b> (the same request and rule, plus one line), paste it and send it.</li>
+    <li>Read both replies and underline every phrase you cannot find in the rule.</li>
+  </ol>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Run 1 · request + rule</span><button class="copy" type="button" data-target="a-c2">Copy</button></div>
+  <pre id="a-c2">Draft a two-line reminder to students about the hostel late fee and how to get a waiver. Here is our rule: Late fee ₹500 per week after the due date. Waiver only by the Chief Warden, on documented hardship, applied for within 10 days.</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Run 2 · the same + one line</span><button class="copy" type="button" data-target="a-c3">Copy</button></div>
+  <pre id="a-c3">Draft a two-line reminder to students about the hostel late fee and how to get a waiver. Here is our rule: Late fee ₹500 per week after the due date. Waiver only by the Chief Warden, on documented hardship, applied for within 10 days. Use only this rule. Where it does not say how, write [check with office].</pre></div>
+  <details><summary>What it showed (open after the activity)</summary>
+    <p>Run 1 filled the gap: in our rehearsal it wrote waivers must be submitted <b>“within 10 days of the due date”</b>. Our rule never says 10 days <i>from what</i>, and it never says how to apply.</p>
+    <p>Run 2 left the deadline as the rule gives it and wrote <b>“For application procedures, [check with office]”</b>.</p>
+    <div class="callout"><p class="clabel">Take-away</p><p>It fills gaps with what is typical. Tell it to mark the gaps.</p></div>
+  </details>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+<section id="s9" class="concept" data-nav="· Where to use AI">
+  <p class="kicker"><span class="tag">Activity 2</span>Using it safely · slide 9</p>
+  <h2>Use AI where errors are cheap and easy to check</h2>
+  <p class="intro">Two questions decide where AI belongs in your work: what does an error cost, and how easily can you check the output?</p>
+  <p>Put the two questions together and every task falls into one of four zones. The table shows each zone, what to do in it, and examples from university work.</p>
+  <table>
+    <thead><tr><th>Zone</th><th>Cost of an error · ease of checking</th><th>How to use AI here</th><th>Examples</th></tr></thead>
+    <tbody>
+      <tr><td><b>Use freely</b></td><td>Low cost, easy to check</td><td>Let AI draft, and skim the draft before you send it.</td><td>Meeting summary; draft of a routine email; ideas for an event theme</td></tr>
+      <tr><td><b>Use, then verify</b></td><td>High cost, easy to check</td><td>AI drafts, and a named person checks every fact and figure.</td><td>First draft of a circular; figures for a board note; FAQ from a published policy</td></tr>
+      <tr><td><b>Use with care</b></td><td>Low cost, hard to check</td><td>AI is good for ideas here. Do not rely on anything you cannot check.</td><td>Literature scan for ideas; translating a public notice; summary of a long report</td></tr>
+      <tr><td><b>A human decides</b></td><td>High cost, hard to check</td><td>AI may support the research, but a person decides and signs.</td><td>Admission decisions; exam marking; regulatory submissions; grievance outcomes</td></tr>
+    </tbody>
+  </table>
+  <p>Decisions about people, marks and regulators are never handed to a model. Most of the real value sits in the two “easy to check” zones, where checking costs little.</p>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Pick one task from your own week and place it in a zone. If it lands in “A human decides”, AI can help you prepare, but the decision and the signature stay with a person.</p></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s10" class="concept" data-nav="· What may go into an AI tool">
+  <p class="kicker"><span class="tag">Activity 2</span>Using it safely · slide 10</p>
+  <h2>Some material may go into an AI tool, and some may not</h2>
+  <p class="intro">Sort a document before you paste it. If you would not email it to an outside consultant, it does not go into an AI tool.</p>
+  <p>Most of us already paste things into chatbots: minutes, drafts, and sometimes student data. The question is not whether to use AI, but what may go in, and into which tool.</p>
+  <table>
+    <thead><tr><th>Kind of material</th><th>Which tool it may go into</th><th>Examples</th></tr></thead>
+    <tbody>
+      <tr><td><b>Public information</b></td><td>Any tool, including public ones.</td><td>Prospectus; press release; public regulations; published papers; event notices</td></tr>
+      <tr><td><b>Internal material</b></td><td>Only the tool the university has approved.</td><td>Committee minutes; draft policies; internal budgets; anonymised data; process manuals</td></tr>
+      <tr><td><b>Personal or confidential</b></td><td>Only systems approved for this kind of data.</td><td>Student records; patient data; unreleased exams; staff appraisals; unpublished research</td></tr>
+    </tbody>
+  </table>
+  <h3>The consultant test</h3>
+  <p>Ask yourself whether you would email this document to an outside consultant who has not signed a confidentiality agreement. If you would not, it does not go into an unapproved tool.</p>
+  <h3>The law in India</h3>
+  <p>Under the Digital Personal Data Protection (DPDP) Act, 2023, the university stays responsible for any personal data it passes to a service, and AI tools are included.</p>
+  <p class="note">The middle row only works if people know which tool is approved. In the session, few people knew. Find out which AI tool the university has approved and where the approved list is published.</p>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Think of the last document you pasted into a chatbot and decide which row it belonged to. Before you paste the next one, sort it first, and use the approved tool for anything internal.</p></div>
+  <div class="next"><span><b>Take-away from Activity 2:</b> It fills gaps with what is typical. Tell it to mark the gaps.</span><a href="#s11">Next · Activity 3: References →</a></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s11" data-nav="Activity 3 · References">
+  <p class="kicker"><span class="tag">Activity 3 of 10</span>Do it · slide 11</p>
+  <h2>Check whether the AI’s references are real</h2>
+  <p class="intro"><b>The situation:</b> A PhD scholar sends the guide an AI-drafted literature review that cites four of the guide’s own papers. Each table checks one reference in Google Scholar.</p>
+  <p>In more detail: the guide is the session presenter, CNB, and all four references are neatly formatted in APA style. The paragraph below is illustrative; the references are the test.</p>
+  <div class="note"><p><b>Chapter 2 · AI-drafted literature review (illustrative)</b></p><p>Hybrid ARIMA–ANN models remain strong baselines for non-linear time series [1]. ARIMA–GARCH partitioning improves stock prediction [2], ARIMA–ANN variants lead on internet traffic [3], and transformer-enhanced hybrids now forecast enrolment [4].</p></div>
+  <h3>The four references (APA 7)</h3>
+  <table>
+    <thead><tr><th>Group</th><th>Reference</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>[1] CNB, &amp; Reddy, B. E. (2014). A moving-average filter based hybrid ARIMA–ANN model for forecasting time series data. <i>Applied Soft Computing, 23</i>, 27–38.</td></tr>
+      <tr><td>2</td><td>[2] CNB, &amp; Sharma, R. K. (2019). Prediction of selected Indian stock using a partitioning–interpolation based ARIMA–GARCH model. <i>Applied Computing and Informatics, 11</i>(2), 130–143.</td></tr>
+      <tr><td>3</td><td>[3] CNB, &amp; Reddy, B. E. (2018). Performance comparison of four new ARIMA-ANN prediction models on internet traffic data. <i>IEEE Access, 6</i>, 67–75.</td></tr>
+      <tr><td>4</td><td>[4] CNB, &amp; Reddy, B. E. (2021). A transformer-enhanced hybrid ARIMA model for enrolment forecasting in Indian universities. <i>Applied Soft Computing, 104</i>, 107–121.</td></tr>
+    </tbody>
+  </table>
+  <div class="test">
+    <div><span class="n">1</span><b>We are testing</b><p>Are these four references real?</p></div>
+    <div><span class="n">2</span><b>The one difference</b><p>There is none you can see: all four look equally correct, so only a check will tell. Each table checks one reference in Google Scholar.</p></div>
+    <div><span class="n">3</span><b>Look for</b><p>Which of these references would you let a scholar submit?</p></div>
+  </div>
+  <h3>Steps</h3>
+  <p>This is a race between tables, and it needs no AI.</p>
+  <ol class="steps">
+    <li>The tables count off 1 to 4 around the room. Your number is your group, and your group checks the reference with the same number.</li>
+    <li>Open Google Scholar in your browser. Copy the search text for your reference from the boxes below (the title in quotation marks), paste it into Scholar and search.</li>
+    <li>Compare the authors, year, journal, volume and pages that Scholar shows with the reference above.</li>
+    <li>The first table to call its reference “genuine” or “wrong”, with the evidence, stands up. One table from each group reports what Scholar shows.</li>
+    <li>Before the answers are shown, everyone votes by show of hands: which of these would you let a scholar submit?</li>
+  </ol>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Group 1 · search text for reference [1]</span><button class="copy" type="button" data-target="b-c1">Copy</button></div>
+  <pre id="b-c1">"A moving-average filter based hybrid ARIMA–ANN model for forecasting time series data"</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Group 2 · search text for reference [2]</span><button class="copy" type="button" data-target="b-c2">Copy</button></div>
+  <pre id="b-c2">"Prediction of selected Indian stock using a partitioning–interpolation based ARIMA–GARCH model"</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Group 3 · search text for reference [3]</span><button class="copy" type="button" data-target="b-c3">Copy</button></div>
+  <pre id="b-c3">"Performance comparison of four new ARIMA-ANN prediction models on internet traffic data"</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Group 4 · search text for reference [4]</span><button class="copy" type="button" data-target="b-c4">Copy</button></div>
+  <pre id="b-c4">"A transformer-enhanced hybrid ARIMA model for enrolment forecasting in Indian universities"</pre></div>
+  <details><summary>What it showed (open after the activity)</summary>
+    <p>Only one of the four references is genuine. Three are wrong, even though they claim to be the presenter’s own papers and even the presenter had to look twice.</p>
+    <table>
+      <thead><tr><th>Reference</th><th>Verdict</th><th>What is wrong</th></tr></thead>
+      <tbody>
+        <tr><td>[1]</td><td><b>Genuine</b></td><td>Nothing. CNB &amp; B. E. Reddy (2014), <i>Applied Soft Computing, 23</i>, 27–38, is exactly as cited.</td></tr>
+        <tr><td>[2]</td><td><b>Wrong year and co-author</b></td><td>The real paper is by CNB &amp; B. E. Reddy (2015), <i>Applied Computing and Informatics, 11</i>(2), 130–143. The reference says 2019 and names an invented co-author, “R. K. Sharma”.</td></tr>
+        <tr><td>[3]</td><td><b>Wrong journal and year</b></td><td>The real paper is by CNB &amp; B. E. Reddy (2015), <i>Journal of Telecommunications and Information Technology</i>, 67–75. The reference says <i>IEEE Access</i> (volume 6), 2018.</td></tr>
+        <tr><td>[4]</td><td><b>Does not exist</b></td><td>There is no such paper. The title, volume and pages are invented, placed in a real journal under the real authors’ names.</td></tr>
+      </tbody>
+    </table>
+    <p>None of the references carries a DOI. Scholar does not show DOIs, and a guessed DOI would be one more fabrication.</p>
+    <div class="callout"><p class="clabel">Take-away</p><p>Fluent formatting is not evidence. Check every source.</p></div>
+  </details>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s12" class="concept" data-nav="· Fluent does not mean correct">
+  <p class="kicker"><span class="tag">Activity 3</span>Why it works · slide 12</p>
+  <h2>Fluent does not mean correct: four real cases show what happens</h2>
+  <p class="intro">Each of these cases began as a confident, well-written AI output.</p>
+  <table>
+    <thead><tr><th>Year</th><th>Case</th><th>What happened</th><th>The lesson</th></tr></thead>
+    <tbody>
+      <tr><td>2023</td><td><b>Mata v. Avianca</b> · USA</td><td>Lawyers were fined over case law the AI invented. A court filing cited six decisions that did not exist, and the judge fined the lawyers and their firm $5,000.</td><td>Check every citation.</td></tr>
+      <tr><td>2024</td><td><b>Moffatt v. Air Canada</b> · Canada</td><td>The airline was held liable for its chatbot’s advice. The chatbot invented a bereavement-fare refund rule, and a tribunal ordered the airline to pay up.</td><td>You own what your AI says.</td></tr>
+      <tr><td>2025</td><td><b>Deloitte</b> · Australia</td><td>Deloitte gave a partial refund on a government report. The report, written for a federal department, contained fabricated references and a made-up court quote.</td><td>Big names are not immune.</td></tr>
+      <tr><td>2023</td><td><b>Samsung</b> · South Korea</td><td>Engineers pasted confidential source code and meeting notes into a public chatbot, and the company restricted its use.</td><td>Pasted data can leak.</td></tr>
+    </tbody>
+  </table>
+  <p>The common thread is not bad technology. In every case, unchecked output reached a decision or the public.</p>
+  <h3>Your signature</h3>
+  <p>The AI does not sign the report. You do. So follow four habits:</p>
+  <ol class="steps">
+    <li>Treat AI output as a draft or an aid to analysis.</li>
+    <li>Check consequential facts against trusted sources.</li>
+    <li>Ask the AI for its assumptions, its uncertainty and its evidence.</li>
+    <li>Keep confidential data out of unapproved tools.</li>
+  </ol>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Accountability stays with whoever signs. Before your name goes on AI-assisted work, check the citations and figures yourself.</p></div>
+  <div class="next"><span><b>Take-away from Activity 3:</b> Fluent formatting is not evidence. Check every source.</span><a href="#s13">Next · Activity 4: How do you know? →</a></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s13" data-nav="Activity 4 · How do you know?">
+  <p class="kicker"><span class="tag">Activity 4 of 10</span>Do it · slide 13</p>
+  <h2>Test whether an AI analysis can answer “How do you know?”</h2>
+  <p class="intro"><b>The situation:</b> A department sends the HOD attendance figures with an AI analysis. Partners run two prompts on the same table, then ask each other: “How do you know?”</p>
+  <p>In more detail: the table covers two months for four courses, and the AI analysis reads well. This activity asks whether it survives the HOD’s first question: “How do you know?”</p>
+  <h3>The table (synthetic; it goes in with both prompts)</h3>
+  <table>
+    <thead><tr><th>Course</th><th>Sep</th><th>Oct</th></tr></thead>
+    <tbody>
+      <tr><td>Data Structures</td><td>82%</td><td>80%</td></tr>
+      <tr><td>Maths III</td><td>78%</td><td>61%</td></tr>
+      <tr><td>Digital Logic</td><td>85%</td><td>84%</td></tr>
+      <tr><td>Communication Skills</td><td>70%</td><td>72%</td></tr>
+    </tbody>
+  </table>
+  <div class="test">
+    <div><span class="n">1</span><b>We are testing</b><p>Does a fluent analysis survive the question “How do you know?”</p></div>
+    <div><span class="n">2</span><b>The one difference</b><p>Prompt 2 adds these lines: <code>Use only this table. Show the change for each course in percentage points. For any drop, list the data that would explain it; do not guess causes. Add no targets or rules that are not given. Under 100 words.</code> Both prompts carry the same table.</p></div>
+    <div><span class="n">3</span><b>Look for</b><p>Underline every sentence that is not a number from the table, and ask: how do you know it?</p></div>
+  </div>
+  <h3>Steps</h3>
+  <ol class="steps">
+    <li>Work in pairs. Partner A will run Prompt 1 and Partner B will run Prompt 2, each in a new chat in Copilot (Work badge).</li>
+    <li>Each partner copies their whole box below in one go, the prompt and the table together, pastes it and sends it once. The AI cannot see the slide, so the table must go in with the prompt.</li>
+    <li>Each partner underlines every sentence in their own output that is not a number from the table.</li>
+    <li>Swap screens. Each partner picks one claim in the other’s output and asks “How do you know?”. The owner must point to the number in the table that supports it.</li>
+    <li>Score both outputs together on the five checks (explained in the next section).</li>
+  </ol>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Prompt 1 · Partner A (prompt + table, one go)</span><button class="copy" type="button" data-target="b-c5">Copy</button></div>
+  <pre id="b-c5">Here is attendance for our second-year courses. Analyse it and give recommendations to the HOD.
+Course | Sep | Oct
+Data Structures | 82% | 80%
+Maths III | 78% | 61%
+Digital Logic | 85% | 84%
+Communication Skills | 70% | 72%</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Prompt 2 · Partner B (prompt + table, one go)</span><button class="copy" type="button" data-target="b-c6">Copy</button></div>
+  <pre id="b-c6">Here is attendance for our second-year courses. Use only this table. Show the change for each course in percentage points. For any drop, list the data that would explain it; do not guess causes. Add no targets or rules that are not given. Under 100 words.
+Course | Sep | Oct
+Data Structures | 82% | 80%
+Maths III | 78% | 61%
+Digital Logic | 85% | 84%
+Communication Skills | 70% | 72%</pre></div>
+  <details><summary>What it showed (open after the activity)</summary>
+    <p>A fluent analysis does not always survive the question. In our rehearsal, Prompt 1 produced a briefing with three findings, a change table, a table of possible causes and three actions. Every change it calculated was right (−2, −17, −1 and +2 points).</p>
+    <p>But its heading read <b>“Communication Skills improved but remains lowest”</b>. That is wrong: in October, Maths III (61%) is lowest, and the briefing’s own body even calls Communication Skills “second-lowest”. It also said <b>“Most technical courses remained stable”</b>, leaving Maths III out of “technical” with no basis. Its actions, such as “Identify students with repeated absences”, assume data we never gave it.</p>
+    <p>Prompt 2 gave a correct change table and one summary line, then wrote: <b>“No information is provided on class schedules, assessments, holidays, student numbers, faculty changes, or attendance records by section, so no causes can be determined from this table alone.”</b> It gave no causes, no targets and no actions. The brief made it stop where the data stops.</p>
+    <p>Your own outputs may differ from these: each run is a sample. Whatever you got, any sentence that is not a number from the table (a “stable”, a possible cause, an action) should face the question “How do you know?”.</p>
+    <div class="callout"><p class="clabel">Take-away</p><p>Ask “How do you know?” of every claim.</p></div>
+  </details>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s14" class="concept" data-nav="· The five checks">
+  <p class="kicker"><span class="tag">Activity 4</span>Why it works · slide 14</p>
+  <h2>The five checks make “How do you know?” systematic</h2>
+  <p class="intro">Score every AI output on five checks before it carries your name. You will use this card in four activities today.</p>
+  <p>Each check has a question and a quick test. The test is the part to remember: it is what you actually do.</p>
+  <table>
+    <thead><tr><th>Check</th><th>The question</th><th>The test</th></tr></thead>
+    <tbody>
+      <tr><td><b>A · Accuracy</b></td><td>Can every fact and figure be verified?</td><td>Check two figures against the source.</td></tr>
+      <tr><td><b>R · Relevance</b></td><td>Does it answer the task you set?</td><td>Re-read the line of your prompt that states the task.</td></tr>
+      <tr><td><b>C · Completeness</b></td><td>Is anything important missing?</td><td>Ask what the reader will ask next.</td></tr>
+      <tr><td><b>T · Traceability</b></td><td>Can each claim be traced to a source?</td><td>Point to the line, page or clause it comes from.</td></tr>
+      <tr><td><b>U · Usability</b></td><td>Can the reader act on it as it is?</td><td>Ask whether you would send it today.</td></tr>
+    </tbody>
+  </table>
+  <h3>How to score</h3>
+  <p>Give each check one of three marks: <b>✓</b> means it passes, <b>✗</b> means it fails, and <b>?</b> means you cannot tell. A <b>?</b> on Accuracy or Traceability counts as a fail, because a claim you cannot verify or trace is not safe to sign.</p>
+  <p class="note">The “?” rule is a house rule we suggest, not a published standard.</p>
+  <h3>Where you use the card today</h3>
+  <ul class="plain">
+    <li>Activity 4 · How do you know?</li>
+    <li>Activity 5 · Fix the brief</li>
+    <li>Activity 8 · Three parents</li>
+    <li>Activity 10 · Your Monday brief</li>
+  </ul>
+  <p>The same card is on the printed 6C card, so you can score at your desk.</p>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Ask yourself which of the five checks you skip most often. For most people it is Traceability, so make pointing to the source a habit.</p></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s15" class="concept" data-nav="· Practice: which line would you not sign?">
+  <p class="kicker"><span class="tag">Activity 4</span>Practice · slide 15</p>
+  <h2>Practice: decide which line of this brief you would not sign</h2>
+  <p class="intro"><b>The situation:</b> A planning office turns a six-month dashboard into a five-line brief for the Dean. The brief reads well, and the room checks which line would not survive “How do you know?”.</p>
+  <p>The situation: a planning office turns a dashboard into a five-line brief for the Dean. The brief reads well, but one line would not survive “How do you know?”. Read the dashboard, the prompt and the brief in that order, then choose line 1, 2 or 3. In the session this was a show of hands.</p>
+  <h3>The dashboard (January to June, synthetic)</h3>
+  <table>
+    <tbody>
+      <tr><td><b>Enrolment</b></td><td>1,240, up 6% on last year</td></tr>
+      <tr><td><b>Attendance</b></td><td>81%, down 4 points</td></tr>
+      <tr><td><b>Lab utilisation</b></td><td>Shown by department against a cap of 85%</td></tr>
+    </tbody>
+  </table>
+  <div class="bars" role="img" aria-label="Lab utilisation by department against an 85 percent cap: CSE 91 percent, ECE 64, Mech 58, Civil 42">
+    <div class="bar"><span>CSE</span><span style="width:91%"></span><span>91%</span></div>
+    <div class="bar low"><span>ECE</span><span style="width:64%"></span><span>64%</span></div>
+    <div class="bar low"><span>Mech</span><span style="width:58%"></span><span>58%</span></div>
+    <div class="bar low"><span>Civil</span><span style="width:42%"></span><span>42%</span></div>
+  </div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">The prompt the planning office used</span></div>
+  <pre>Act as a planning analyst. Using only this dashboard, write a five-line brief for the Dean: patterns, possible explanations labelled as hypotheses, data gaps, and actions with owners and a review date.</pre></div>
+  <h3>The AI’s brief (excerpt)</h3>
+  <ol class="steps">
+    <li>CSE labs are above the 85% cap (91%). Consider extended hours; owner: Head, CSE.</li>
+    <li>Civil lab use is low (42%) because students prefer online simulations.</li>
+    <li>Attendance fell 4 points. Data gap: no breakdown by year of study.</li>
+  </ol>
+  <details><summary>What it showed (open after the activity)</summary>
+    <p><b>Line 2 is the one not to sign.</b> It states a cause, that students prefer online simulations, which the dashboard cannot show. The prompt asked for explanations labelled as hypotheses, and this one is presented as fact.</p>
+    <p>Lines 1 and 3 trace back to the dashboard: 91% against the 85% cap, and the 4-point fall in attendance with an honest data gap.</p>
+    <p>The fix is to rewrite line 2 as a hypothesis and check it against the lab booking records.</p>
+    <div class="callout"><p class="clabel">Take-away</p><p>Ask “How do you know?” of every claim.</p></div>
+  </details>
+  <p class="note">Synthetic data. Not for student grading or assessment design.</p>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s16" class="concept" data-nav="· How much checking?">
+  <p class="kicker"><span class="tag">Activity 4</span>Why it works · slide 16</p>
+  <h2>How much checking a piece of work needs rises with the stakes</h2>
+  <p class="intro">You need more of the five checks (Accuracy, Relevance, Completeness, Traceability, Usability) as the stakes rise.</p>
+  <p>The practical question for a head of department is not “should we check?” but “how much checking does this piece of work deserve, and who has to sign it?”. The answer climbs in three steps: more checks and more reviewers as the stakes rise.</p>
+  <table>
+    <thead><tr><th>Stakes</th><th>Kind of work</th><th>Who reviews</th><th>Checks from the card</th></tr></thead>
+    <tbody>
+      <tr><td><b>Low</b></td><td>Internal drafts: your own notes, first drafts, brainstorming.</td><td>You.</td><td>2 of 5: <b>Relevance</b> and <b>Usability</b>. A quick read: does it answer the task, and can you use it as it is?</td></tr>
+      <tr><td><b>Medium</b></td><td>External communication: circulars, parent emails, website and press text.</td><td>You, plus a colleague who confirms the facts.</td><td>4 of 5: <b>Accuracy</b>, <b>Relevance</b>, <b>Completeness</b> and <b>Usability</b>. Every fact and figure is checked, and a colleague confirms the facts before it goes out.</td></tr>
+      <tr><td><b>High</b></td><td>Board, regulatory and student-outcome work: board papers, accreditation filings, anything on a student’s record.</td><td>You, plus a second reviewer, plus a named approver who signs.</td><td>All 5, with each claim traced to its source. The named approver reads it and signs.</td></tr>
+    </tbody>
+  </table>
+  <h3>Where today’s activities sit</h3>
+  <ul class="plain">
+    <li><b>Low stakes:</b> Activity 10, your Monday brief, is an internal draft.</li>
+    <li><b>Medium stakes:</b> Activity 8, the reply to a parent, is external communication.</li>
+    <li><b>High stakes:</b> the <a href="#o4">optional board note</a>. Score it on all five checks.</li>
+  </ul>
+  <p class="note">The assignment of checks to each step is a house rule we suggest, not a published standard.</p>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Decide which step most of your office’s AI-assisted work sits on, and name the person who signs at the top step.</p></div>
+  <div class="next"><span><b>Take-away from Activity 4:</b> Ask “How do you know?” of every claim.</span><a href="#s17">Next · Activity 5: Fix the brief →</a></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+<section id="s17" data-nav="Activity 5 · Fix the brief">
+  <p class="kicker"><span class="tag">Activity 5 of 10</span>Do it · slide 17</p>
+  <h2>Summarise a policy, then fix the brief</h2>
+  <p class="intro"><b>The situation:</b> The Dean’s office must explain a new assessment policy to faculty and students. We ask the AI to “Summarise this”, then add five lines to the brief and compare.</p>
+  <p>In more detail: the Academic Council has passed the policy. Most of us would type one line, “Summarise this.” This activity shows what that line decides on its own, and what five short lines add.</p>
+  <div class="test">
+    <div><span class="n">1</span><b>We are testing</b><p>Does “Summarise this” stay faithful to the policy?</p></div>
+    <div><span class="n">2</span><b>The one difference</b><p>Run 2 adds five lines: <code>Faculty: 3 bullets on what you must do and by when. Students: 3 bullets on what changes and your rights. Plain English, under 60 words each. Keep every number and deadline exactly; add nothing that is not in the text. Then list anything ambiguous.</code> Both runs use the same policy.</p></div>
+    <div><span class="n">3</span><b>Look for</b><p>Anything the summary decides that the policy did not.</p></div>
+  </div>
+  <h3>The policy extract (synthetic)</h3>
+  <p class="note">With effect from the next academic year, continuous internal assessment shall carry 40% of the final grade in all programmes, of which not less than half shall derive from at least two written components. Faculty shall upload assessment records to the academic portal within seven working days of each component. Students shall be entitled to view their evaluated scripts within fourteen days of the publication of marks.</p>
+  <h3>Steps</h3>
+  <ol class="steps">
+    <li>Open Copilot Chat (Work badge) and start a <b>new chat</b>. Copy <b>Run 1</b> (prompt and policy together), paste it and send.</li>
+    <li>Start a <b>second new chat</b>. Copy <b>Run 2</b> (the same prompt, five extra lines and the same policy), paste it and send.</li>
+    <li>Read both replies. Mark anything the summary states that the policy itself does not decide.</li>
+    <li>Score both outputs with the five checks (Accuracy, Relevance, Completeness, Traceability, Usability).</li>
+    <li>Read the list of ambiguities that Run 2 gives, and ask yourself whether it found everything you would have found.</li>
+  </ol>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Run 1 · prompt + policy</span><button class="copy" type="button" data-target="c-c1">Copy</button></div>
+  <pre id="c-c1">Summarise this policy for faculty and students. Policy (synthetic): With effect from the next academic year, continuous internal assessment shall carry 40% of the final grade in all programmes, of which not less than half shall derive from at least two written components. Faculty shall upload assessment records to the academic portal within seven working days of each component. Students shall be entitled to view their evaluated scripts within fourteen days of the publication of marks.</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Run 2 · prompt + five lines + the same policy</span><button class="copy" type="button" data-target="c-c2">Copy</button></div>
+  <pre id="c-c2">Summarise this policy for faculty and students. Faculty: 3 bullets on what you must do and by when. Students: 3 bullets on what changes and your rights. Plain English, under 60 words each. Keep every number and deadline exactly; add nothing that is not in the text. Then list anything ambiguous. Policy (synthetic): With effect from the next academic year, continuous internal assessment shall carry 40% of the final grade in all programmes, of which not less than half shall derive from at least two written components. Faculty shall upload assessment records to the academic portal within seven working days of each component. Students shall be entitled to view their evaluated scripts within fourteen days of the publication of marks.</pre></div>
+  <details><summary>What it showed (open after the activity)</summary>
+    <p>Run 1 looked good. In our rehearsal it gave bullets for faculty and for students plus a table, kept all four facts (40%, two written components, seven working days, fourteen days) and invented no penalty or appeal. But it quietly settled two points that the policy leaves open, as if the Council had decided them:</p>
+    <ul class="plain">
+      <li>It wrote <b>“At least 20% of the final grade (half of the CIA marks)”</b>. The policy says “not less than half” of the 40%; the summary picked exactly half and turned it into a new figure.</li>
+      <li>It wrote <b>“within seven working days after each assessment component is completed”</b>. The policy says “of each component”; it never says whether the seven days run from the assessment or from the marking. The summary picked the assessment.</li>
+    </ul>
+    <p>Its student bullets also weakened “at least half” to “part of the CIA marks”.</p>
+    <p>Run 2 kept the policy’s own wording (“within seven working days of each component”) and listed four ambiguities: “next academic year” has no start date; “not less than half” could mean exactly 50% or any higher share; “publication of marks” is not defined; and “working days” is not defined (for example, whether weekends and holidays count).</p>
+    <p>Run 2’s list still <b>missed</b> the most important question: seven working days from what, the assessment or the marking? That is exactly the point Run 1 had decided on its own. It is the same question as Activity 2’s “10 days from what?”.</p>
+    <p>If your Run 1 kept the policy’s wording, ask yourself “Half of what? Seven days from when?” and check whether your Run 2 list names either point. Even when the AI’s list is good, compare it with your own reading.</p>
+    <div class="callout"><p class="clabel">Take-away</p><p>Brief fully, and ask what is ambiguous.</p></div>
+  </details>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s18" class="concept" data-nav="· 6C: six parts of a good brief">
+  <p class="kicker"><span class="tag">Activity 5</span>Why it works · slide 18</p>
+  <h2>A good brief contains six things, which we call the 6C</h2>
+  <p class="intro">These are the six things you would tell a capable new senior colleague before handing over a task.</p>
+  <p>Think of a prompt as delegation, not as a technique. Leaders already brief people this way. In Activity 5, the five lines you added covered three of these parts: Composition (who reads it and in what shape), Constraints (keep every number, add nothing) and Critique (list what is ambiguous).</p>
+  <table>
+    <thead><tr><th>Part</th><th>Name</th><th>What it tells the AI</th></tr></thead>
+    <tbody>
+      <tr><td>C1</td><td><b>Character</b></td><td>It sets the perspective you want, such as analyst, reviewer or planner.</td></tr>
+      <tr><td>C2</td><td><b>Context</b></td><td>It gives the background, the audience and the actual data.</td></tr>
+      <tr><td>C3</td><td><b>Command</b></td><td>It states one clear task as an action.</td></tr>
+      <tr><td>C4</td><td><b>Constraints</b> (often missing)</td><td>It sets the scope, the limits and what not to do.</td></tr>
+      <tr><td>C5</td><td><b>Composition</b></td><td>It fixes the format, length and structure of the answer.</td></tr>
+      <tr><td>C6</td><td><b>Critique</b> (often missing)</td><td>It tells the answer how to check itself before it is finished.</td></tr>
+    </tbody>
+  </table>
+  <h3>The two parts most often missing</h3>
+  <p>In most prompts people write, <b>Constraints</b> and <b>Critique</b> are left out. They are exactly the parts that stop the AI from guessing confidently.</p>
+  <h3>How many parts does a task need?</h3>
+  <p>Not every task needs all six. A quick question needs two: the Command and the Context. Anything that feeds a decision, such as a decision document, needs all six.</p>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Before you send a prompt that will feed a decision, check that it says what not to do (Constraints) and how to check the answer (Critique).</p></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s19" class="concept" data-nav="· 6C on a real board note">
+  <p class="kicker"><span class="tag">Activity 5</span>Why it works · slide 19</p>
+  <h2>On a real board note, removing any one of the six parts makes the note weaker</h2>
+  <p class="intro"><b>The situation:</b> The IQAC office must put end-of-semester feedback for 12 programmes before the Board of Management. This prompt briefs the AI for that note, and each highlighted part does one job.</p>
+  <p>The IQAC office has to put end-of-semester feedback for 12 programmes in front of the Board of Management. Board members are not survey specialists, and anything in the note may be quoted back at a dean. This is the 6C brief applied to a real committee paper.</p>
+  <table>
+    <thead><tr><th>Part</th><th>What the prompt says</th><th>Without this part, the note typically says</th></tr></thead>
+    <tbody>
+      <tr><td>C1 Character</td><td>Act as an academic quality analyst preparing a note for the Board of Management.</td><td>The tone becomes generic: “Overall, students seem fairly happy!”</td></tr>
+      <tr><td>C2 Context</td><td>The attached table summarises end-of-semester feedback for 12 programmes (response rate 64%). Board members are not survey specialists.</td><td>It writes for the wrong reader: “Mean Likert score 3.4 (σ 0.9) suggests…”</td></tr>
+      <tr><td>C3 Command</td><td>Identify the three programmes that most need attention and explain why.</td><td>It answers the wrong question: “Here is a summary of all 12 programmes.”</td></tr>
+      <tr><td>C4 Constraints</td><td>Use only the attached figures. Do not name individual faculty. Treat comments as indicative, not representative.</td><td>It invents causes and blames a person: “B.Pharm scores reflect weak teaching by Dr S.”</td></tr>
+      <tr><td>C5 Composition</td><td>Format: a one-page note with 3 findings and figures, a table of programmes needing action, and 3 next steps.</td><td>The format is unusable: “Para 1 of 9: The feedback exercise was…”</td></tr>
+      <tr><td>C6 Critique</td><td>Before finishing, check every figure against the table and list anything you could not verify.</td><td>Figures go unchecked: “Satisfaction rose 18% this year.”</td></tr>
+    </tbody>
+  </table>
+  <p class="note">The quoted outputs are illustrative, not captured from a real run. All figures and names are synthetic.</p>
+  <h3>Which part would you delete first?</h3>
+  <p>Most people would cut C4 and C6 first, because they feel like extra words. Yet they are the parts that keep invented causes, blame and unchecked figures out of the note. Without C4, the note offers a cause (“weak teaching by Dr S.”) that the data cannot show, and it names a person.</p>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>You can reuse this six-part structure for any committee paper. Keep the Constraints and the Critique even when the prompt feels long.</p></div>
+  <div class="next"><span><b>Take-away from Activity 5:</b> Brief fully, and ask what is ambiguous.</span><a href="#s20">Next · Activity 6: Three offices →</a></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s20" data-nav="Activity 6 · Three offices">
+  <p class="kicker"><span class="tag">Activity 6 of 10</span>Do it · slide 20</p>
+  <h2>Give three offices the same instruction with different examples</h2>
+  <p class="intro"><b>The situation:</b> The same four staff achievements go to three offices: the annual report, the newsletter and the NIRF return. Every table sends the same instruction; only the examples differ.</p>
+  <p>In more detail: the annual-report team wants one-line entries, the newsletter wants friendly sentences, and the IQAC cell filing the NIRF data return wants data rows. Only the three finished examples each office pastes are different.</p>
+  <div class="test">
+    <div><span class="n">1</span><b>We are testing</b><p>Does the same instruction give the same format?</p></div>
+    <div><span class="n">2</span><b>The one difference</b><p>Only the three examples on each card differ. The instruction and the notes are the same on every card.</p></div>
+    <div><span class="n">3</span><b>Look for</b><p>Compare the three cards’ outputs. Which one is right?</p></div>
+  </div>
+  <h3>What is the same on every card (synthetic)</h3>
+  <p>The instruction: “Rewrite each note as an entry in the same style as these examples. Use only what the note says.”</p>
+  <p>The four notes:</p>
+  <ol class="steps">
+    <li>Dr P. Kulkarni (Civil) gave an invited talk on smart concrete at IIT Madras.</li>
+    <li>MBA students won the national case competition; team lead Ananya R.</li>
+    <li>Prof. M. Fernandes (Pharmacy) was granted a patent for a drug-delivery gel.</li>
+    <li>Ms T. Joseph (Library) completed NAAC assessor training.</li>
+  </ol>
+  <h3>Which card your table takes</h3>
+  <p>The tables split into three groups. For example, tables 1 to 3 take Card A (annual report), tables 4 to 6 take Card B (newsletter), and tables 7 to 9 take Card C (NIRF data return). The split may be adjusted to the room, so check which card your table has been given.</p>
+  <h3>Steps</h3>
+  <ol class="steps">
+    <li>Find your table’s card below.</li>
+    <li>Open Copilot Chat (Work badge) and start a <b>new chat</b>. Copy your card’s box (instruction, examples and notes together), paste it and send.</li>
+    <li>One table per card reads out its first entry. The room compares the three cards and decides which one is right.</li>
+  </ol>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Card A · annual report</span><button class="copy" type="button" data-target="c-c3">Copy</button></div>
+  <pre id="c-c3">Rewrite each note as an entry in the same style as these examples. Use only what the note says. Example 1: Best Paper Award · IEEE conference, Pune / Dr A. Rao, CSE. Example 2: First Prize · State Hackathon / Team lead M. Shetty, ECE. Example 3: Publication · Nature Energy / Prof. K. Das, ME. Notes: (1) Dr P. Kulkarni (Civil) gave an invited talk on smart concrete at IIT Madras. (2) MBA students won the national case competition; team lead Ananya R. (3) Prof. M. Fernandes (Pharmacy) was granted a patent for a drug-delivery gel. (4) Ms T. Joseph (Library) completed NAAC assessor training.</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Card B · newsletter</span><button class="copy" type="button" data-target="c-c4">Copy</button></div>
+  <pre id="c-c4">Rewrite each note as an entry in the same style as these examples. Use only what the note says. Example 1: Congratulations to Dr A. Rao (CSE), who won the Best Paper Award at the IEEE conference in Pune! Example 2: Well done to our ECE team, led by M. Shetty, on winning first prize at the State Hackathon! Example 3: Prof. K. Das (ME) has a new paper out in Nature Energy. Congratulations! Notes: (1) Dr P. Kulkarni (Civil) gave an invited talk on smart concrete at IIT Madras. (2) MBA students won the national case competition; team lead Ananya R. (3) Prof. M. Fernandes (Pharmacy) was granted a patent for a drug-delivery gel. (4) Ms T. Joseph (Library) completed NAAC assessor training.</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Card C · NIRF data return</span><button class="copy" type="button" data-target="c-c5">Copy</button></div>
+  <pre id="c-c5">Rewrite each note as an entry in the same style as these examples. Use only what the note says. Example 1: Award | Best Paper | IEEE conference, Pune | Rao A. | CSE. Example 2: Award | First Prize | State Hackathon | Shetty M. (team lead) | ECE. Example 3: Publication | Journal article | Nature Energy | Das K. | ME. Notes: (1) Dr P. Kulkarni (Civil) gave an invited talk on smart concrete at IIT Madras. (2) MBA students won the national case competition; team lead Ananya R. (3) Prof. M. Fernandes (Pharmacy) was granted a patent for a drug-delivery gel. (4) Ms T. Joseph (Library) completed NAAC assessor training.</pre></div>
+  <details><summary>What it showed (open after the activity)</summary>
+    <p>The same instruction produced three different formats, and each one was correct for its office. The examples decided the format. In our rehearsal the four entries came out like this:</p>
+    <table>
+      <thead><tr><th>Card</th><th>Entries in our rehearsal</th></tr></thead>
+      <tbody>
+        <tr><td><b>A</b> · annual report</td><td>Invited Talk · IIT Madras / Dr P. Kulkarni, Civil<br>National Case Competition Winner · Team lead Ananya R. / MBA Students<br>Patent Granted · Drug-delivery Gel / Prof. M. Fernandes, Pharmacy<br>NAAC Assessor Training Completed · NAAC / Ms T. Joseph, Library</td></tr>
+        <tr><td><b>B</b> · newsletter</td><td>Congratulations to Dr P. Kulkarni (Civil) on delivering an invited talk on smart concrete at IIT Madras!<br>Well done to our MBA students, led by Ananya R., on winning the national case competition!<br>Prof. M. Fernandes (Pharmacy) has been granted a patent for a drug-delivery gel. Congratulations!<br>Congratulations to Ms T. Joseph (Library) on successfully completing NAAC assessor training!</td></tr>
+        <tr><td><b>C</b> · NIRF data return</td><td>Invited Talk | Smart Concrete | IIT Madras | Kulkarni P. | Civil<br>Achievement | National Case Competition Winner | National Case Competition | Ananya R. (team lead) | MBA<br>Patent | Drug-Delivery Gel | Patent Granted | Fernandes M. | Pharmacy<br>Professional Development | NAAC Assessor Training Completed | NAAC Assessor Training | Joseph T. | Library</td></tr>
+      </tbody>
+    </table>
+    <p>So which one would you send back? None, for its format. But Card C has one slip to check: in the patent entry it put <b>“Patent Granted”</b> in the column where the examples put the venue, and “Patent Granted” is not a venue. Card C also repeats “National Case Competition” and “NAAC Assessor Training” in two columns. The other cards have small slips too: Card A puts the team lead where the detail should go and drops “smart concrete”, and Card B adds the word “successfully”, which the note does not say.</p>
+    <p>The format was right on every card, but each entry still needs a person’s check. If your table’s output differs from another table with the same card, that is Activity 1 again: one run is a sample. An output laid out as a table with a header row is the same format and is fine.</p>
+    <p><b>Why did Card C get the patent wrong?</b> None of its three examples was a patent, so the AI had no pattern for one and guessed. The next section shows this.</p>
+    <div class="callout"><p class="clabel">Take-away</p><p>The examples decide the format. Show what you want.</p></div>
+  </details>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s21" class="concept" data-nav="· Examples work only for what they show">
+  <p class="kicker"><span class="tag">Activity 6</span>Why it works · slide 21</p>
+  <h2>Examples work only for the kinds of items they show</h2>
+  <p class="intro">Few-shot means an instruction plus a few worked examples. The AI copies their pattern, but only for the kinds of items they show.</p>
+  <p>In Activity 6, Card C’s patent entry went wrong. This section shows why.</p>
+  <h3>What Card C’s three examples showed</h3>
+  <p>The instruction was: “Rewrite each note as an entry in the same style as these examples. Use only what the note says.” The examples used five columns: Type | Detail | Venue | Name | Department.</p>
+  <table>
+    <thead><tr><th>Kind of item</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>Award</td><td>Award | Best Paper | IEEE conference, Pune | Rao A. | CSE</td></tr>
+      <tr><td>Award</td><td>Award | First Prize | State Hackathon | Shetty M. (team lead) | ECE</td></tr>
+      <tr><td>Publication</td><td>Publication | Journal article | Nature Energy | Das K. | ME</td></tr>
+    </tbody>
+  </table>
+  <p>There is no patent among them.</p>
+  <h3>What happened to the patent note</h3>
+  <p>The note said: “Prof. M. Fernandes (Pharmacy) was granted a patent for a drug-delivery gel.” Card C wrote (rehearsal output):</p>
+  <p><code>Patent | Drug-Delivery Gel | <b>Patent Granted</b> | Fernandes M. | Pharmacy</code></p>
+  <p>“Patent Granted” is in the venue column, and a patent has no venue. The AI had never been shown how a patent should look, so it guessed. It got the awards right because the examples showed it awards.</p>
+  <h3>Three things to remember</h3>
+  <ol class="steps">
+    <li>Examples set the format and the tone.</li>
+    <li>The instruction sets the limits: “use only what the note says”.</li>
+    <li>You check every item no example covers. That is where the AI guesses.</li>
+  </ol>
+  <h3>What “few-shot” means</h3>
+  <p>Each worked example is one “shot”. A prompt with no examples is zero-shot; a prompt with a few is few-shot. Keep your examples consistent, and include an example of every type of item you expect.</p>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Try it: Card C with a patent example added (prompt + examples + notes, one go)</span><button class="copy" type="button" data-target="c-c5b">Copy</button></div>
+  <pre id="c-c5b">Rewrite each note as an entry in the same style as these examples. Use only what the note says. Example 1: Award | Best Paper | IEEE conference, Pune | Rao A. | CSE. Example 2: Award | First Prize | State Hackathon | Shetty M. (team lead) | ECE. Example 3: Publication | Journal article | Nature Energy | Das K. | ME. Example 4: Patent | Solar crop dryer | Indian Patent Office | Rao A. | CSE. Notes: (1) Dr P. Kulkarni (Civil) gave an invited talk on smart concrete at IIT Madras. (2) MBA students won the national case competition; team lead Ananya R. (3) Prof. M. Fernandes (Pharmacy) was granted a patent for a drug-delivery gel. (4) Ms T. Joseph (Library) completed NAAC assessor training.</pre></div>
+  <p class="note">With a patent example, the patent entry should put the patent office in the venue column. Check the other entries too: a talk and a training course still have no example.</p>
+  <h3>Where it is useful</h3>
+  <ul class="plain">
+    <li>Writing annual-report entries, newsletter items and NIRF data in one house style.</li>
+    <li>Sorting comments into labels (see the next section).</li>
+    <li>Standardising names and codes, and writing replies in a fixed template.</li>
+  </ul>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Show the format with examples, cover every type of item you expect, and check the items your examples do not cover.</p></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s22" class="concept" data-nav="· With 2,000 items, a rule for unclear cases">
+  <p class="kicker"><span class="tag">Activity 6</span>Why it works · slide 22</p>
+  <h2>With 2,000 items, write a rule for the unclear cases</h2>
+  <p class="intro"><b>The situation:</b> A department has 2,000 end-of-semester student comments to sort into three labels before its review meeting. Nobody can read them all, so the AI labels them from three examples.</p>
+  <p>The link to the last section: no example covers a comment that fits two labels, so the AI will guess. With 2,000 comments you cannot check them all by hand, so you write a rule for the unclear ones and have the AI set them aside.</p>
+  <p>A department’s end-of-semester feedback has 2,000 student comments that must be sorted before the review meeting. Nobody can read them all, and if the same kind of comment gets different labels, the counts are useless.</p>
+  <h3>The instruction</h3>
+  <p>“Label each comment Academic, Facilities or Admin. Use only these labels.” This line fixes the set of labels, so the model cannot invent a fourth one.</p>
+  <h3>The three examples</h3>
+  <table>
+    <thead><tr><th>Example comment</th><th>Label</th></tr></thead>
+    <tbody>
+      <tr><td>“Lab sessions don’t match the lecture schedule.”</td><td>Academic</td></tr>
+      <tr><td>“Hostel Wi-Fi drops every evening.”</td><td>Facilities</td></tr>
+      <tr><td>“Fee receipts take three weeks to arrive.”</td><td>Admin</td></tr>
+    </tbody>
+  </table>
+  <p>The examples show where each boundary sits.</p>
+  <h3>Vote first: which label would you give this comment?</h3>
+  <p>“The library closes before evening labs finish.” In the room, hands go up for Academic, Facilities or Admin.</p>
+  <details><summary>What the vote showed (open after you have voted)</summary>
+    <p>The most likely answer is Facilities, but the room usually splits. The split is the point: if a room of experts disagrees, the model will guess. The fix is to add a rule for comments that fit two labels: “If a comment fits two labels, choose the service it complains about and add BORDERLINE.”</p>
+  </details>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Prompt with the borderline rule (to try it yourself)</span><button class="copy" type="button" data-target="c-c6">Copy</button></div>
+  <pre id="c-c6">Label each comment Academic, Facilities or Admin. Use only these labels. If a comment fits two labels, choose the service it complains about and add BORDERLINE. Examples: “Lab sessions don’t match the lecture schedule.” → Academic. “Hostel Wi-Fi drops every evening.” → Facilities. “Fee receipts take three weeks to arrive.” → Admin.</pre></div>
+  <p class="note">Add your own comments after the examples before you send it.</p>
+  <h3>What the 2,000 comments might look like after labelling</h3>
+  <div class="bars" role="img" aria-label="Of 2,000 comments: Academic 812, Facilities 694, Admin 431, flagged borderline for review 63">
+    <div class="bar"><span>Academic</span><span style="width:100%"></span><span>812</span></div>
+    <div class="bar"><span>Facilities</span><span style="width:85%"></span><span>694</span></div>
+    <div class="bar"><span>Admin</span><span style="width:53%"></span><span>431</span></div>
+    <div class="bar low"><span>Borderline</span><span style="width:8%"></span><span>63</span></div>
+  </div>
+  <p>The 63 comments flagged BORDERLINE go to a person for review.</p>
+  <p class="note">The comments and counts are synthetic and illustrative. Use only anonymised comments, in an approved tool.</p>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Fix the label set in the instruction, show one example per label, and add a rule that flags borderline cases for a person to check.</p></div>
+  <div class="next"><span><b>Take-away from Activity 6:</b> Where my examples don’t show a case, the AI guesses. Those are the entries I must check.</span><a href="#s23">Next · Activity 7: A rule we don’t have →</a></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s23" data-nav="Activity 7 · A rule we don’t have">
+  <p class="kicker"><span class="tag">Activity 7 of 10</span>Do it · slide 23</p>
+  <h2>Ask the AI to explain a rule we don’t have</h2>
+  <p class="intro"><b>The situation:</b> The academic office asks the AI to explain on-duty attendance for sports and NSS, assuming our rules cover it. We paste our rules and check which clause the answer comes from.</p>
+  <p>In more detail: the office is drafting a notice to students. Most universities have an on-duty rule, so the request assumes ours has one too. This activity tests what the AI does with that assumption.</p>
+  <div class="test">
+    <div><span class="n">1</span><b>We are testing</b><p>When we ask it to explain a rule we don’t have, what does it do?</p></div>
+    <div><span class="n">2</span><b>The one difference</b><p>Run 2 adds one line: <code>Use only these rules. If they do not cover something you are asked to explain, write [not in our rules] instead of drafting it.</code> Both runs use the same request and rules.</p></div>
+    <div><span class="n">3</span><b>Look for</b><p>Find the on-duty section in the reply. Which clause gives it?</p></div>
+  </div>
+  <h3>The attendance rules, Section 5 (synthetic, pasted in both runs)</h3>
+  <table>
+    <tbody>
+      <tr><td>5.1</td><td>Students must attend at least 75% of classes in each course to sit the end-semester examination.</td></tr>
+      <tr><td>5.2</td><td>The Dean may condone a shortage of up to 10% on medical grounds, with a certificate submitted within 7 days of return.</td></tr>
+      <tr><td>5.3</td><td>Attendance is recorded by the course faculty in the academic portal after every class.</td></tr>
+      <tr><td>5.4</td><td>Students below the requirement after condonation repeat the course.</td></tr>
+    </tbody>
+  </table>
+  <h3>Steps</h3>
+  <ol class="steps">
+    <li>Vote first, with a show of hands: do these rules cover on-duty attendance for sports and NSS events? Keep your answer in mind.</li>
+    <li>Open Copilot Chat (Work badge) and start a <b>new chat</b>. Copy <b>Run 1</b> (request and rules together), paste it and send.</li>
+    <li>Start a <b>second new chat</b>. Copy <b>Run 2</b> (the same request, one extra line and the same rules), paste it and send.</li>
+    <li>In each reply, find the section on on-duty attendance and look for the clause it comes from.</li>
+  </ol>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Run 1 · request + rules</span><button class="copy" type="button" data-target="c-c7">Copy</button></div>
+  <pre id="c-c7">Draft a short notice to students explaining our attendance rules, including how on-duty attendance is granted for university sports and NSS events. ATTENDANCE RULES (synthetic). Section 5. 5.1 Students must attend at least 75% of classes in each course to sit the end-semester examination. 5.2 The Dean may condone a shortage of up to 10% on medical grounds, with a certificate submitted within 7 days of return. 5.3 Attendance is recorded by the course faculty in the academic portal after every class. 5.4 Students below the requirement after condonation repeat the course.</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Run 2 · request + one line + the same rules</span><button class="copy" type="button" data-target="c-c8">Copy</button></div>
+  <pre id="c-c8">Draft a short notice to students explaining our attendance rules, including how on-duty attendance is granted for university sports and NSS events. Use only these rules. If they do not cover something you are asked to explain, write [not in our rules] instead of drafting it. ATTENDANCE RULES (synthetic). Section 5. 5.1 Students must attend at least 75% of classes in each course to sit the end-semester examination. 5.2 The Dean may condone a shortage of up to 10% on medical grounds, with a certificate submitted within 7 days of return. 5.3 Attendance is recorded by the course faculty in the academic portal after every class. 5.4 Students below the requirement after condonation repeat the course.</pre></div>
+  <details><summary>What it showed (open after the activity)</summary>
+    <p>No clause in Section 5 mentions on-duty attendance, sports or NSS.</p>
+    <p>Run 1 wrote the rule anyway. In our rehearsal it added: <b>“On-Duty Attendance: Students representing the institution in University Sports and NSS activities/events may be granted on-duty attendance for the approved period of participation, subject to submission of the required authorization and participation documents through the prescribed procedure.”</b> It then signed the notice <b>“By Order of the Academic Office”</b>, so an invented rule went out looking official.</p>
+    <p>Run 2 wrote: <b>“On-duty attendance for university sports and NSS events: [not in our rules].”</b> A person can now decide what the rule should be.</p>
+    <p>Look closely at Run 2 too: it described condonation as “on medical grounds only”, but rule 5.2 does not say “only”. Every draft still needs a person’s check.</p>
+    <p>Why we used a request and not a question: if you ask directly, “Is on-duty attendance covered?”, Copilot usually answers “not stated”. If you ask it to explain the rule, it writes one. Real requests usually arrive in that second form. In Activity 2 the AI filled a small gap (“of the due date”); here it filled a whole rule.</p>
+    <div class="callout"><p class="clabel">Take-away</p><p>Let it say “not in our rules”. A person decides.</p></div>
+  </details>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s24" class="concept" data-nav="· Working with documents">
+  <p class="kicker"><span class="tag">Activity 7</span>Why it works · slide 24</p>
+  <h2>When you work with a document, every answer should point back to its clause</h2>
+  <p class="intro"><b>The situation:</b> The purchase committee must check which bidders are eligible under a tender notice. The AI lists each eligibility rule with its clause number, and writes “not stated” where the notice is silent.</p>
+  <h3>A prompt that does this</h3>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Prompt + tender clauses, one go</span><button class="copy" type="button" data-target="c-c9">Copy</button></div>
+  <pre id="c-c9">Using only the tender notice below, list each eligibility criterion with its clause number. Then answer: does the notice require a local service centre in Karnataka? If the notice does not answer a point, write ‘not stated’; do not fill gaps from general knowledge.
+TENDER NOTICE · Section 4 · Eligibility of bidders
+4.1 Average annual turnover of at least ₹5 crore over the last three financial years.
+4.2 A valid ISO 9001 certificate on the date of bid submission.
+4.3 Two similar installations at Indian universities completed since 2021.
+4.4 Bids are submitted through the e-procurement portal before the closing date.</pre></div>
+  <p class="note">The AI cannot see this page: the box carries the prompt and the four clauses together. With your own document, attach it instead of the clauses.</p>
+  <h3>The same tender notice, to read: Section 4, eligibility of bidders</h3>
+  <table>
+    <tbody>
+      <tr><td>4.1</td><td>Average annual turnover of at least ₹5 crore over the last three financial years.</td></tr>
+      <tr><td>4.2</td><td>A valid ISO 9001 certificate on the date of bid submission.</td></tr>
+      <tr><td>4.3</td><td>Two similar installations at Indian universities completed since 2021.</td></tr>
+      <tr><td>4.4</td><td>Bids are submitted through the e-procurement portal before the closing date.</td></tr>
+    </tbody>
+  </table>
+  <h3>The answer it should give</h3>
+  <table>
+    <thead><tr><th>Criterion</th><th>Clause</th></tr></thead>
+    <tbody>
+      <tr><td>Average turnover of at least ₹5 crore over the last three years</td><td>4.1</td></tr>
+      <tr><td>Valid ISO 9001 certificate at submission</td><td>4.2</td></tr>
+      <tr><td>Two similar university installations since 2021</td><td>4.3</td></tr>
+      <tr><td>Local service centre in Karnataka</td><td><b>not stated</b></td></tr>
+    </tbody>
+  </table>
+  <p>The last row is the lesson. Asked about a local service centre, a model left to itself often “remembers” a requirement that is typical for tenders. The prompt makes it write “not stated” instead.</p>
+  <p>Models can still misquote a clause, so check every quote against the document yourself.</p>
+  <p class="note">The tender notice is illustrative.</p>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Ask for clause numbers, allow “not stated”, and spot-check the quotes against the document. Upload only what you are allowed to share with that tool.</p></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s25" class="concept" data-nav="· A context pack">
+  <p class="kicker"><span class="tag">Activity 7</span>Why it works · slide 25</p>
+  <h2>Give the AI what it needs by preparing a context pack</h2>
+  <p class="intro"><b>The situation:</b> The organising committee needs a minute-by-minute run-of-show for convocation and has a folder of emails, minutes and plans. The skill is choosing what to give the AI, not pasting everything.</p>
+  <p>Most poor AI output is a context problem, not a model problem. The usual failure is pasting everything you have: the key constraint gets lost in 40 pages.</p>
+  <div class="flow"><span>Everything you have: emails, minutes, old reports, spreadsheets, policies, floor plans</span><i>→</i><span>Choose: keep what the task needs, define your terms, drop the rest</span><i>→</i><span>A context pack with what matters</span></div>
+  <h3>The five parts of a context pack, for a convocation run-of-show</h3>
+  <table>
+    <thead><tr><th>#</th><th>Part</th><th>Convocation example</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><b>Goal and audience</b></td><td>A minute-by-minute run-of-show for the organising committee.</td></tr>
+      <tr><td>2</td><td><b>Source data and documents</b></td><td>Last year’s run-of-show, the venue floor plan, and the graduand count by school.</td></tr>
+      <tr><td>3</td><td><b>Definitions and assumptions</b></td><td>“Graduand” means eligible with fees cleared. The chief guest arrives at 9:30.</td></tr>
+      <tr><td>4</td><td><b>Constraints and exclusions</b></td><td>The hall seats 2,500. The ceremony runs under three hours. No student names go in the draft.</td></tr>
+      <tr><td>5</td><td><b>Output contract</b></td><td>A table with time, segment, owner and risk. Anything unknown is listed as a question.</td></tr>
+    </tbody>
+  </table>
+  <p>In this example, the hall capacity and the “no student names” rule are exactly the facts that get lost when everything is pasted in.</p>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Use the colleague test before you send: could a colleague do the task from this pack alone? If not, the AI cannot either.</p></div>
+  <div class="next"><span><b>Take-away from Activity 7:</b> Let it say “not in our rules”. A person decides.</span><a href="#s26">Next · Activity 8: Three parents →</a></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+<section id="s26" data-nav="Activity 8 · Three parents">
+  <p class="kicker"><span class="tag">Activity 8 of 10</span>Do it · slide 26</p>
+  <h2>Review one draft reply for three different parents</h2>
+  <p class="intro"><b>The situation:</b> The Dean’s office has one draft reply about a hostel deposit, and it has the amount and the deadline wrong. Three parents ask different things, and each table has the AI correct the draft for one of them.</p>
+  <p>In more detail: the draft promises the full ₹45,000 within 7 days, but the policy gives ₹40,000 less a ₹2,000 fee, within 30 working days. One parent asks when the money will come, one asks why it is ₹2,000 short, and one complains about rudeness at the hostel counter.</p>
+  <div class="test">
+    <div><span class="n">1</span><b>We are testing</b><p>Does the same review give the same “best” reply for every reader?</p></div>
+    <div><span class="n">2</span><b>The one difference</b><p>Only the parent’s email differs on each card. The review prompt, the policy and the draft are the same on every card, and each card runs in a new chat.</p></div>
+    <div><span class="n">3</span><b>Look for</b><p>Does each revision answer what its parent asked?</p></div>
+  </div>
+  <h3>The policy and the draft (the same on every card)</h3>
+  <table>
+    <tbody>
+      <tr><td><b>Fee policy, section 6</b> (synthetic)</td><td>The hostel deposit is ₹40,000. It is refundable on vacating, less a ₹2,000 processing fee, within 30 working days of the clearance form, after approval by the Finance Officer.</td></tr>
+      <tr><td><b>Draft reply</b></td><td>“Dear Mr Rao, Thank you for your email about your daughter’s hostel deposit. We are sorry for the delay. We will refund the full deposit of ₹45,000 to your account within 7 days. Please contact us if you need anything further. Regards, Office of the Dean, Student Welfare.”</td></tr>
+    </tbody>
+  </table>
+  <h3>Steps</h3>
+  <ol class="steps">
+    <li>The room splits into three groups, and each table gets one card: A, B or C.</li>
+    <li>Open a <b>new chat</b> in Copilot Chat (Work badge). Copy your card’s box below, which holds the review prompt, the policy, the parent’s email and the draft, paste it and send it once.</li>
+    <li>Read the revised reply and ask yourself whether it answers the question your parent asked.</li>
+    <li>One table for each card reads out its parent’s question and the first lines of its revision, and the room judges whether the revision answers that parent.</li>
+    <li>Discuss one question together: would Card A’s letter satisfy Card C’s parent?</li>
+  </ol>
+
+  <h3>Card A · The parent asks when the money will come</h3>
+  <p>The parent writes: “My daughter vacated the hostel on 30 April and submitted the clearance form on 2 May. The deposit has not been refunded. When will we receive it?”</p>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Card A · prompt + policy + email + draft, in one go</span><button class="copy" type="button" data-target="d-c1">Copy</button></div>
+  <pre id="d-c1">Review the draft reply against these seven criteria: accuracy, audience fit, commitments, policy, tone, length, and whether it answers what the parent asked. List the three most important problems, then give a revised version. FEE POLICY, SECTION 6 (synthetic): Hostel deposit ₹40,000. Refundable on vacating, less a ₹2,000 processing fee, within 30 working days of the clearance form, after approval by the Finance Officer. PARENT’S EMAIL: My daughter vacated the hostel on 30 April and submitted the clearance form on 2 May. The deposit has not been refunded. When will we receive it? R. Rao. DRAFT REPLY: Dear Mr Rao, Thank you for your email about your daughter’s hostel deposit. We are sorry for the delay. We will refund the full deposit of ₹45,000 to your account within 7 days. Please contact us if you need anything further. Regards, Office of the Dean, Student Welfare.</pre></div>
+
+  <h3>Card B · The parent asks why they will get ₹2,000 less</h3>
+  <p>The parent writes: “My daughter vacated the hostel on 30 April and submitted the clearance form on 2 May. Your office says the deposit is ₹40,000. Why will we receive only ₹38,000?”</p>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Card B · prompt + policy + email + draft, in one go</span><button class="copy" type="button" data-target="d-c2">Copy</button></div>
+  <pre id="d-c2">Review the draft reply against these seven criteria: accuracy, audience fit, commitments, policy, tone, length, and whether it answers what the parent asked. List the three most important problems, then give a revised version. FEE POLICY, SECTION 6 (synthetic): Hostel deposit ₹40,000. Refundable on vacating, less a ₹2,000 processing fee, within 30 working days of the clearance form, after approval by the Finance Officer. PARENT’S EMAIL: My daughter vacated the hostel on 30 April and submitted the clearance form on 2 May. Your office says the deposit is ₹40,000. Why will we receive only ₹38,000? R. Rao. DRAFT REPLY: Dear Mr Rao, Thank you for your email about your daughter’s hostel deposit. We are sorry for the delay. We will refund the full deposit of ₹45,000 to your account within 7 days. Please contact us if you need anything further. Regards, Office of the Dean, Student Welfare.</pre></div>
+
+  <h3>Card C · The parent complains that their daughter was spoken to rudely</h3>
+  <p>The parent writes: “My daughter went to the hostel office on 5 May to ask about her deposit and was spoken to rudely at the counter. This is unacceptable.”</p>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Card C · prompt + policy + email + draft, in one go</span><button class="copy" type="button" data-target="d-c3">Copy</button></div>
+  <pre id="d-c3">Review the draft reply against these seven criteria: accuracy, audience fit, commitments, policy, tone, length, and whether it answers what the parent asked. List the three most important problems, then give a revised version. FEE POLICY, SECTION 6 (synthetic): Hostel deposit ₹40,000. Refundable on vacating, less a ₹2,000 processing fee, within 30 working days of the clearance form, after approval by the Finance Officer. PARENT’S EMAIL: My daughter went to the hostel office on 5 May to ask about her deposit and was spoken to rudely at the counter. This is unacceptable. R. Rao. DRAFT REPLY: Dear Mr Rao, Thank you for your email about your daughter’s hostel deposit. We are sorry for the delay. We will refund the full deposit of ₹45,000 to your account within 7 days. Please contact us if you need anything further. Regards, Office of the Dean, Student Welfare.</pre></div>
+
+  <details><summary>What it showed (open after the activity)</summary>
+    <p>The same review gave three different best replies, because each parent asked something different. Card C still has one slip to check.</p>
+    <p><b>Card A (when?).</b> In our rehearsal, the review listed the wrong amount (₹45,000 instead of ₹40,000 less ₹2,000), the unsupported 7-day promise and apology, and that the draft “does not fully answer the parent’s question”. Its revision was built on the timeline: “Refunds are processed within 30 working days of submission of the clearance form and after approval by the Finance Officer. Our records show that the clearance form was submitted on 2 May.” It still gave no actual date, although 30 working days from 2 May can be worked out, and it never stated the net figure of ₹38,000.</p>
+    <p><b>Card B (how much?).</b> This card was not run in our rehearsal, so here is the expected outcome rather than a captured one. A good revision explains the arithmetic: the deposit is ₹40,000, a ₹2,000 processing fee is deducted under the policy, so the refund is ₹38,000, paid within 30 working days of the clearance form. An illustrative line would be: “The deposit is ₹40,000. Under our policy, a ₹2,000 processing fee is deducted, so the refund is ₹38,000, within 30 working days of the clearance form.”</p>
+    <p><b>Card C (a complaint).</b> In our rehearsal, the review said the draft “does not answer the parent’s main concern”, and the revision led with the apology: “We are sorry to learn that your daughter felt she was spoken to rudely during her visit to the hostel office on 5 May. We take concerns regarding staff conduct seriously and will review the matter with the hostel team.” It also corrected the money facts (the ₹2,000 fee, 30 working days, the Finance Officer’s approval).</p>
+    <p><b>The slip in Card C.</b> The phrase “felt she was spoken to rudely” softens the apology, and a parent may resent it. The same revision also thanked the parent twice and gave no ₹40,000 or ₹38,000 figure. A person still has to read the revision before it goes out.</p>
+    <p class="note">If your revision still says ₹45,000 or “7 days”, the review missed accuracy as well; check it against the policy. If two tables with the same card got different letters, that is Activity 1 again: one run is a sample.</p>
+    <div class="callout"><p class="clabel">Take-away</p><p>A “better” reply depends on who is reading it. Check what they asked.</p></div>
+  </details>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s27" class="concept" data-nav="· Self-review: a checklist, not “make it better”">
+  <p class="kicker"><span class="tag">Activity 8</span>Why it works · slide 27</p>
+  <h2>Give the AI a checklist, not “make it better”</h2>
+  <p class="intro">This is called self-review: the AI checks its own draft against a checklist you give it. In Activity 8, the checklist had seven points.</p>
+  <p><b>The point in one sentence:</b> do not ask the AI to “make it better”. Give it a checklist, ask it to list the problems first, then fix them, and read the result yourself.</p>
+  <h3>What most people do, and why it fails</h3>
+  <p>Most people ask “make it better”. The wording gets smoother, but the hostel reply from Activity 8 still promises ₹45,000 in 7 days. Nothing wrong gets fixed, because the AI was never told what “wrong” means.</p>
+  <h3>What to do instead: four steps, on the same draft</h3>
+  <ol class="steps">
+    <li><b>The draft.</b> The reply from Activity 8 promises the full deposit of ₹45,000 within 7 days.</li>
+    <li><b>The seven checks.</b> Accuracy, audience fit, commitments, policy, tone, length, and whether it answers what the reader asked. They find three problems: the amount is wrong (the policy gives ₹40,000 less a ₹2,000 fee, so ₹38,000); “7 days” breaks the policy, which says 30 working days; and, for Card C’s parent, the reply ignores the complaint.</li>
+    <li><b>The fixed reply,</b> with a list of what changed. For Card C’s parent: “We are sorry your daughter was treated rudely on 5 May, and we are looking into it. The refund is ₹38,000, within 30 working days. …” (illustrative).</li>
+    <li><b>You still read it.</b> A fixed reply can add new mistakes, and your name goes on it.</li>
+  </ol>
+  <p>The seventh check, “does it answer what the reader asked?”, is the one only you can judge, because only you know the reader. It is why the three parents got three different replies.</p>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Self-review prompt (add your draft, and the policy if there is one)</span><button class="copy" type="button" data-target="d-c4">Copy</button></div>
+  <pre id="d-c4">Review this draft against seven checks: accuracy, audience fit, commitments, policy, tone, length, and whether it answers what the reader asked. List the three most important problems, then revise it and list what you changed.</pre></div>
+  <h3>Where to use it</h3>
+  <p>Use it for anything people will rely on: letters, circulars, notices, regulator replies, minutes, policy drafts, reports and proposals. Skip it for brainstorming, rough notes and anything where a mistake costs little.</p>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Never send “make it better”. Send a checklist, ask for the problems first, and read the fixed version before it goes out.</p></div>
+  <div class="next"><span><b>Take-away from Activity 8:</b> Give the AI a checklist, not “make it better”. Then read the result yourself.</span><a href="#s28">Next · Activity 9: For and against →</a></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s28" data-nav="Activity 9 · For and against">
+  <p class="kicker"><span class="tag">Activity 9 of 10</span>Do it · slide 28</p>
+  <h2>Ask the AI for the case for, then the case against</h2>
+  <p class="intro"><b>The situation:</b> A policy committee is weighing a strict attendance rule. Half the room asks the AI why it is good, the other half why it is bad, and we compare the two cases.</p>
+  <p>In more detail: a committee member asks the AI for “the three strongest reasons this policy is good” and gets a persuasive case. Would it have argued the other side just as well?</p>
+  <div class="test">
+    <div><span class="n">1</span><b>We are testing</b><p>Does the AI give you the answer, or the answer you asked for?</p></div>
+    <div><span class="n">2</span><b>The one difference</b><p>Only the last word changes: <code>good</code> or <code>bad</code>. The left half of the room asks one way and the right half the other, each in a new chat.</p></div>
+    <div><span class="n">3</span><b>Look for</b><p>Compare the two halves: which side argued better?</p></div>
+  </div>
+  <h3>Steps</h3>
+  <ol class="steps">
+    <li>The room splits down the middle. If you sit in the left half, copy the “good” prompt; if you sit in the right half, copy the “bad” prompt.</li>
+    <li>Open a <b>new chat</b> in Copilot Chat (Work badge), paste your prompt and send it once.</li>
+    <li>One person from each side reads their three reasons aloud, and the room decides which side argued better.</li>
+    <li>Then everyone opens another new chat and runs the neutral prompt.</li>
+  </ol>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Left half · reasons the policy is good</span><button class="copy" type="button" data-target="d-c5">Copy</button></div>
+  <pre id="d-c5">Our university is considering a new rule: 75% attendance is mandatory in every course, with no condonation for any reason. Give me the three strongest reasons this policy is good.</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Right half · reasons the policy is bad</span><button class="copy" type="button" data-target="d-c6">Copy</button></div>
+  <pre id="d-c6">Our university is considering a new rule: 75% attendance is mandatory in every course, with no condonation for any reason. Give me the three strongest reasons this policy is bad.</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Everyone · the neutral prompt (in a new chat)</span><button class="copy" type="button" data-target="d-c7">Copy</button></div>
+  <pre id="d-c7">Our university is considering a new rule: 75% attendance is mandatory in every course, with no condonation for any reason. Give the strongest case for and against, and what evidence would change the decision.</pre></div>
+  <details><summary>What it showed (open after the activity)</summary>
+    <p>Both sides argued with equal conviction. The same AI gave opposite confident conclusions, each following the way the question was framed.</p>
+    <table>
+      <thead><tr><th>Asked for “good” (our rehearsal)</th><th>Asked for “bad” (our rehearsal)</th></tr></thead>
+      <tbody>
+        <tr><td>1. “Protects minimum academic engagement across all subjects.”</td><td>1. “It penalizes legitimate and unavoidable absences.” It added that a student with 74% attendance due to hospitalisation is treated the same as one who skipped classes.</td></tr>
+        <tr><td>2. “Creates a clear, simple, and consistently enforceable rule”, which it said reduces perceptions of unequal treatment or favouritism.</td><td>2. “Attendance is an imperfect measure of learning.”</td></tr>
+        <tr><td>3. “Strengthens the expectation of professional responsibility.”</td><td>3. “It creates disproportionate academic risk from small shortfalls.”</td></tr>
+        <tr><td>It ended with one hedge, an “Important trade-off”: the rule may penalise students facing genuine illness, disability, family emergencies or university-approved activities.</td><td>Each reason came with “Why this matters”, and it ended “In summary” with no balancing line at all.</td></tr>
+      </tbody>
+    </table>
+    <p>The AI was not neutral either: it hedged only the “good” side. The neutral prompt is the fix, because it asks for both cases and for the evidence that would change the decision.</p>
+    <p class="note">If both halves got a balanced answer, compare the order and the weight: which side comes first, and which side gets the caveats. The framing still shows.</p>
+    <div class="callout"><p class="clabel">Take-away</p><p>It follows your framing. Ask for both sides.</p></div>
+  </details>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s29" class="concept" data-nav="· Nine prompt patterns">
+  <p class="kicker"><span class="tag">Activity 9</span>Tools · slide 29</p>
+  <h2>Ask for both sides: nine prompt patterns to take home</h2>
+  <p class="intro">These are nine starting points. Replace the words in brackets with your own context and limits.</p>
+  <p>The patterns are sorted by the question you are asking. The first five help when you are working on content. The last four help when you are sending a decision upward and want to test it first. Each pattern also has a purpose: to understand, to judge, to strengthen or to check.</p>
+  <h3>When you ask: what do I want to do with this content?</h3>
+  <table>
+    <thead><tr><th>Pattern</th><th>Example prompt</th><th>Use it when</th></tr></thead>
+    <tbody>
+      <tr><td><b>Explain</b> (understand)</td><td><code>Explain [topic] to [audience]: one example, one misconception.</code></td><td>The reader is new to the topic.</td></tr>
+      <tr><td><b>Analyse</b> (judge)</td><td><code>Separate what the data shows, possible causes and evidence gaps.</code></td><td>You have raw data.</td></tr>
+      <tr><td><b>Compare</b> (judge)</td><td><code>Score [options] on the same [criteria]; show the trade-offs.</code></td><td>You have two or more options.</td></tr>
+      <tr><td><b>Improve</b> (strengthen)</td><td><code>Critique against [criteria], revise, then list what you changed.</code></td><td>Others will rely on the draft.</td></tr>
+      <tr><td><b>Verify</b> (check)</td><td><code>Check every claim against [source]; mark anything unverified.</code></td><td>You are about to sign or send.</td></tr>
+    </tbody>
+  </table>
+  <h3>When you ask: I am sending a decision upward, so how do I test it first?</h3>
+  <table>
+    <thead><tr><th>Pattern</th><th>Example prompt</th><th>Use it when</th></tr></thead>
+    <tbody>
+      <tr><td><b>Brief me</b> (understand)</td><td><code>Brief me in 5 bullets: decision, options, risks, cost, deadline.</code></td><td>You have a long paper and little time.</td></tr>
+      <tr><td><b>Find the risks</b> (judge)</td><td><code>List academic, legal, financial and student risks, and fixes.</code></td><td>You are about to commit to an option.</td></tr>
+      <tr><td><b>Red-team my draft</b> (strengthen)</td><td><code>Find the three weakest points and how a critic would attack them.</code></td><td>Others are about to read your draft.</td></tr>
+      <tr><td><b>Sceptical board member</b> (strengthen)</td><td><code>What five hard questions would a sceptical board member ask?</code></td><td>You are rehearsing for the meeting.</td></tr>
+    </tbody>
+  </table>
+  <h3>All nine in one meeting: the Board of Studies</h3>
+  <p>Imagine you are a programme coordinator taking a revised syllabus to the Board of Studies (a synthetic scenario). You can use the patterns in this order:</p>
+  <ol class="steps">
+    <li><b>Brief me</b> on the agenda papers.</li>
+    <li><b>Analyse</b> last year’s course feedback.</li>
+    <li><b>Compare</b> the two syllabus drafts.</li>
+    <li><b>Find the risks</b> in the option you prefer.</li>
+    <li><b>Red-team</b> your own proposal note.</li>
+    <li>Ask what a <b>sceptical board member</b> would ask, to prepare for the likely questions.</li>
+    <li><b>Improve</b> the final paper.</li>
+    <li><b>Explain</b> the change for students.</li>
+    <li><b>Verify</b> the draft minutes before they are circulated.</li>
+  </ol>
+  <h3>The same patterns work for other meetings</h3>
+  <ul class="plain">
+    <li><b>Parent–teacher meeting:</b> brief yourself on the class results, explain them for parents, then verify the summary.</li>
+    <li><b>Mentoring meeting:</b> analyse the mentee’s record, then improve the note.</li>
+    <li><b>An event:</b> find the risks, red-team the plan, then verify the circular.</li>
+  </ul>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Pick the pattern by the question you are asking. Keep any student or staff detail anonymised, and use only an approved tool.</p></div>
+  <div class="next"><span><b>Take-away from Activity 9:</b> It follows your framing. Ask for both sides.</span><a href="#s30">Next · Activity 10: Your Monday brief →</a></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s30" data-nav="Activity 10 · Your Monday brief">
+  <p class="kicker"><span class="tag">Activity 10 of 10</span>Do it · slide 30</p>
+  <h2>Write the brief you will use on Monday</h2>
+  <p class="intro"><b>The situation:</b> Everyone writes, on paper, a brief for one real task they face next week. Then you swap with a neighbour and score each other’s brief with the five checks.</p>
+  <p>In more detail: this is the last hands-on activity, so the card leaves the room with a real use. There is no AI run: it is done on paper, and nobody pastes real data.</p>
+  <div class="test">
+    <div><span class="n">1</span><b>We are testing</b><p>Can you brief a real task of yours using the 6C?</p></div>
+    <div><span class="n">2</span><b>The one difference</b><p>There is no AI run. Your neighbour scores your brief with the five checks, on paper. Describe your data; paste nothing real.</p></div>
+    <div><span class="n">3</span><b>Look for</b><p>Which C is missing? What would a sceptical board member ask?</p></div>
+  </div>
+  <h3>Steps</h3>
+  <ol class="steps">
+    <li><b>Pick a real task for this week</b>, for example a committee summary, a reply to an accreditation query or a vendor comparison.</li>
+    <li><b>Write the brief on the 6C card</b> (see <a href="#s18">the 6C brief</a>). Describe your data in words; do not paste anything real in the room.</li>
+    <li><b>Swap cards with your neighbour.</b> Your neighbour scores your brief with the five checks (see <a href="#s14">the five checks</a>): <b>A</b>ccuracy, <b>R</b>elevance, <b>C</b>ompleteness, <b>T</b>raceability and <b>U</b>sability.</li>
+    <li>Your neighbour names the C that is missing and asks you one question: “What would a sceptical board member ask about this?”</li>
+    <li><b>Keep the card, and use it on Monday.</b></li>
+  </ol>
+  <h3>What the card asks you to fill in</h3>
+  <table>
+    <tbody>
+      <tr><td><b>The task</b></td><td>The real task you will brief next week.</td></tr>
+      <tr><td><b>My 6C</b></td><td>Character, Context, Command, Constraints, Composition and Critique, with a tick for each one you have written, and a mark for the C you most often miss.</td></tr>
+      <tr><td><b>Data I will not paste</b></td><td>The real data you will describe instead of pasting.</td></tr>
+      <tr><td><b>How I will check it</b></td><td>The five checks: A, R, C, T, U.</td></tr>
+      <tr><td><b>Signed</b></td><td>Your name, because you own the result.</td></tr>
+    </tbody>
+  </table>
+  <p>If you are stuck, here is an example brief for minutes of an academic council meeting. Try naming its six Cs.</p>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Example brief · minutes from academic council</span><button class="copy" type="button" data-target="d-c8">Copy</button></div>
+  <pre id="d-c8">Act as my executive assistant. From the notes below (no student names), draft minutes listing each decision, owner and deadline in a table. Use only what is in the notes; flag anything unclear rather than guessing. One page. Finish with the items you were unsure about.</pre></div>
+  <details><summary>What it showed (open after the activity)</summary>
+    <p>The missing C is usually <b>Constraints</b> or <b>Critique</b>. These are the two that stop the AI guessing: Constraints say what not to do and what to leave out, and Critique says how the AI should flag what it is unsure of.</p>
+    <p>If your neighbour found no missing C, ask the sceptical board member question again; the gap usually shows up in one of those two.</p>
+    <div class="callout"><p class="clabel">Take-away</p><p>Use the card on Monday.</p></div>
+  </details>
+  <div class="next"><span><b>Take-away from Activity 10:</b> Use the card on Monday.</span><a href="#s31">Next · Ten activities, ten take-aways →</a></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s31" class="concept" data-nav="Close · Ten activities, ten take-aways">
+  <p class="kicker"><span class="tag">Close</span>What you take back · slide 31</p>
+  <h2>Ten activities give you ten take-aways</h2>
+  <p class="intro">Here is one line from each experiment, all on one page.</p>
+  <table>
+    <thead><tr><th>#</th><th>Activity</th><th>What we did</th><th>Take-away</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><b>Same question twice</b></td><td>We asked the same question in two new chats and got two different numbers.</td><td>One run is a sample. Quote a figure only with a source.</td></tr>
+      <tr><td>2</td><td><b>Our rule</b></td><td>We gave it one of our rules and saw it fill the gaps where the rule was silent.</td><td>It fills gaps with what is typical. Tell it to mark the gaps.</td></tr>
+      <tr><td>3</td><td><b>References</b></td><td>We checked AI-written references in Google Scholar to see which ones were real.</td><td>Fluent formatting is not evidence. Check every source.</td></tr>
+      <tr><td>4</td><td><b>How do you know?</b></td><td>We tested whether an AI analysis could show where each of its claims came from.</td><td>Ask “How do you know?” of every claim.</td></tr>
+      <tr><td>5</td><td><b>Fix the brief</b></td><td>We asked for a policy summary, then added five lines to the request and compared the results.</td><td>Brief fully, and ask what is ambiguous.</td></tr>
+      <tr><td>6</td><td><b>Three offices</b></td><td>Three groups gave the same instruction with different examples and compared the formats they got.</td><td>Examples set the format. Check the items no example covers.</td></tr>
+      <tr><td>7</td><td><b>A rule we don’t have</b></td><td>We asked it to explain a rule we do not have and watched whether it invented one.</td><td>Let it say “not in our rules”. A person decides.</td></tr>
+      <tr><td>8</td><td><b>Three parents</b></td><td>We reviewed one draft reply for three different parents and got three different revisions.</td><td>Give it a checklist, and check what the reader asked.</td></tr>
+      <tr><td>9</td><td><b>For and against</b></td><td>Half the room asked for reasons for a policy and half for reasons against, and both got a confident case.</td><td>It follows your framing. Ask for both sides.</td></tr>
+      <tr><td>10</td><td><b>Your Monday brief</b></td><td>We each wrote a real brief for next week, and a neighbour scored it with the five checks.</td><td>Use the card on Monday.</td></tr>
+    </tbody>
+  </table>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Better prompts improve the work. Verification protects the decision.</p></div>
+  <div class="next"><span>Now turn the ten take-aways into a plan for your own work.</span><a href="#s32">Next · Your plan: start with your own courses →</a></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="s32" class="concept" data-nav="Close · Your adoption plan">
+  <p class="kicker"><span class="tag">Close</span>Your next step · slide 32</p>
+  <h2>Your plan: start with your own courses</h2>
+  <p class="intro">Start with your own courses, and bring the department in once you have evidence.</p>
+  <p>You own your own courses, so the plan starts there: two low-risk tasks in one course, evidence first, then the department. The department step comes later and goes through the normal committees, in line with the university’s AI policy. The phases have no fixed length; move on when your evidence says so.</p>
+  <div class="flow"><span>Phase 1 · one course of yours</span><i>→</i><span>Phase 2 · your routine</span><i>→</i><span>Phase 3 · your department</span></div>
+  <table>
+    <thead><tr><th>Phase</th><th>What you do</th><th>Example tasks</th></tr></thead>
+    <tbody>
+      <tr><td><b>Phase 1 · One course of yours</b></td><td>Choose two low-risk tasks from one course. Use approved tools and anonymised data only. Score every output with the five checks.</td><td>Lecture notes and internal-assessment questions, because you can check every line yourself.</td></tr>
+      <tr><td><b>Phase 2 · Your routine</b></td><td>Extend to feedback, mentoring and parent–teacher meeting work. Remove names before any student detail goes in. Save the prompts that worked.</td><td>Rubric feedback, mentoring notes and parent–teacher meeting (PTM) summaries.</td></tr>
+      <tr><td><b>Phase 3 · Your department</b></td><td>Show your evidence at a department meeting. Share prompts for circulars and minutes. Agree common rules through the programme committee.</td><td>Circulars and Board of Studies minutes.</td></tr>
+    </tbody>
+  </table>
+  <h3>What to measure</h3>
+  <ul class="plain">
+    <li>The time you save on each task.</li>
+    <li>The errors you catch before the output is used.</li>
+    <li>Your own confidence in the result.</li>
+    <li>The amount of personal or student data put into unapproved tools, which must stay at none.</li>
+  </ul>
+  <div class="callout gold"><p class="clabel">Your turn</p><p>Which two tasks from your own courses will you start with in Phase 1?</p></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<!-- CHALLENGE START -->
+<section id="s33" class="concept" data-nav="Bonus · The prompt challenge">
+  <p class="kicker"><span class="tag">Bonus</span>The prompt challenge · slide 33</p>
+  <h2>Write a prompt that turns a messy memo into the exact notice the exam cell wants</h2>
+  <p class="intro"><b>The situation:</b> The exam cell has sent HODs a messy internal memo about rescheduled exams. Write a prompt of 60 words or fewer that turns it into the exact student notice shown, and check it on the reference page.</p>
+  <p>This is the day in one task. Everything the checker looks for is something you met in an activity: the facts, a change that is not yet approved, private details, nothing added, the shape of the result and its length.</p>
+  <h3>The rules</h3>
+  <ol class="steps"><li>Your prompt must be 60 words or fewer. Paste the memo into Copilot separately; it does not count.</li><li>Do not copy the target into your prompt. Describe the result you want instead.</li><li>Try as many times as you like, in a new chat each time if you wish.</li><li>Paste your prompt and only the notice part of the output into the checker on the reference page.</li><li>All six checks green, with a prompt of 60 words or fewer: raise your hand. The first five win.</li></ol>
+  <h3>The source: the exam cell’s memo (paste this into Copilot after your prompt)</h3>
+  <div class="box"><div class="boxhead"><span class="boxlabel">The memo · synthetic</span><button class="copy" type="button" data-target="d-ch1">Copy</button></div>
+  <pre id="d-ch1">INTERNAL · EXAM CELL · NOTE TO HODs (NOT FOR CIRCULATION)
+Because of the state holiday declared on 14 March, these end-semester exams are rescheduled.
+Data Structures (CS301), originally 14 March, now 21 March, 10:00–13:00, Hall B.
+Engineering Mathematics III (MA301) is unchanged on 18 March.
+Digital Logic (EC302), originally 14 March, now 19 March, 14:00–17:00, Hall C.
+Communication Skills (HS201) moves from Room 104 to Hall A, same date, 20 March, 10:00–12:00.
+Proposed, subject to the Dean’s approval: Environmental Studies (EV101) may move from 22 March to 25 March, 10:00–12:00, Hall A.
+Dr R. Menon (invigilation lead) is on leave from 18 to 20 March; for invigilator swaps call Mr S. Kumar on 98450 12345.
+Results will be published 14 days after the last exam.
+Student queries: exam cell, extension 214.</pre></div>
+  <h3>The target: the notice the exam cell wants</h3>
+  <p><b>Revised end-semester exam schedule</b></p>
+  <table>
+    <thead><tr><th>Date</th><th>Course</th><th>Time</th><th>Room</th></tr></thead>
+    <tbody><tr><td>19 March</td><td>Digital Logic (EC302)</td><td>14:00–17:00</td><td>Hall C</td></tr><tr><td>20 March</td><td>Communication Skills (HS201)</td><td>10:00–12:00</td><td>Hall A (moved from Room 104)</td></tr><tr><td>21 March</td><td>Data Structures (CS301)</td><td>10:00–13:00</td><td>Hall B</td></tr><tr><td>25 March [to be confirmed]</td><td>Environmental Studies (EV101)</td><td>10:00–12:00</td><td>Hall A</td></tr></tbody>
+  </table>
+  <p>Results will be published 14 days after the last exam.<br>Queries: exam cell, extension 214.</p>
+  <p class="note">Your output does not need the same words. It must pass the six checks below. Times such as 2:00 PM or 14:00 both count.</p>
+  <h3>The six checks</h3>
+  <ol class="steps"><li><b>Facts:</b> Every changed exam has the right course, date, start time and room.</li><li><b>Not yet approved:</b> The proposed Environmental Studies change is marked “to be confirmed”.</li><li><b>Private details:</b> No staff names, no phone number and nothing about staff leave.</li><li><b>Nothing added:</b> Nothing the memo does not say, and no exam that did not change.</li><li><b>Shape:</b> A table with the columns Date, Course, Time and Room, and the exam-cell contact line.</li><li><b>Length:</b> 120 words or fewer.</li></ol>
+  <h3>Check your attempt</h3>
+  <div class="chk">
+    <label for="chkPrompt">1. Your prompt (60 words or fewer; not the memo)</label>
+    <textarea id="chkPrompt" rows="4" placeholder="Paste only your instruction here."></textarea>
+    <p class="chk-count" id="chkPW">0 words</p>
+    <label for="chkOut">2. The notice Copilot gave you (paste only the notice, not Copilot’s chat lines)</label>
+    <textarea id="chkOut" rows="9" placeholder="Paste the notice here."></textarea>
+    <button type="button" id="chkGo" class="chk-go">Check my attempt</button>
+    <p class="chk-tries" id="chkTries"></p>
+    <div id="chkRes" aria-live="polite"></div>
+  </div>
+  <details><summary>A prompt that wins (open only after you have tried)</summary>
+    <p>This prompt has 58 words. Yours can be completely different; there is no single right answer.</p>
+    <div class="box"><div class="boxhead"><span class="boxlabel">One winning prompt</span><button class="copy" type="button" data-target="d-ch2">Copy</button></div>
+    <pre id="d-ch2">Turn this exam-cell memo into a student notice. Include only exams whose date, time or room changed. Table columns: Date, Course, Time, Room, in date order. Mark anything not yet approved &quot;[to be confirmed]&quot;. Then one line on results and the exam-cell contact. Use only the memo; no staff names or phone numbers; no advice. Under 120 words.</pre></div>
+    <p>It works because it names every hidden feature of the target: only the changed exams, the four columns, date order, “[to be confirmed]” for what is not approved, the results and contact lines, use only the memo, no names or numbers, no advice, and a length limit. That is a full brief in under 60 words.</p>
+  </details>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Describe the result you want, not just the task. A short prompt wins when every word names something the result must have.</p></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+<style>.chk label{display:block;font-weight:600;margin:12px 0 4px}.chk textarea{width:100%;box-sizing:border-box;font:15px/1.45 ui-monospace,Consolas,monospace;padding:8px;border:1px solid var(--line);border-radius:6px;background:#fff}
+.chk-count{margin:4px 0 0;font-size:14px;color:#5b6468}.chk-count.over{color:#B3261E;font-weight:700}.chk-go{margin-top:12px;background:var(--green);color:#fff;border:0;border-radius:6px;padding:10px 18px;font:600 16px/1 inherit;cursor:pointer}
+.chk-tries{font-size:14px;color:#5b6468;margin:8px 0 0}#chkRes ul{list-style:none;padding:0;margin:10px 0}#chkRes li{padding:8px 10px;border-radius:6px;margin:6px 0;background:#F6E1DE}#chkRes li.ok{background:#DCEBE3}
+#chkRes .gate{background:#FFF4D6;border-left:4px solid var(--gold);padding:8px 10px;border-radius:6px;margin:8px 0}#chkRes .win{background:#0B5D47;color:#fff;padding:16px;border-radius:8px;font-size:20px;font-weight:700;text-align:center;margin:10px 0}
+#chkRes .score{font-size:18px;font-weight:700;margin:10px 0 0}</style>
+<script>
+// Prompt challenge checker (change log V8-9). Runs offline in the participant page; also testable with node.
+// checkChallenge(prompt, output, target) -> { gate: [messages], checks: [{name, pass, why}], score, win }
+(function (root) {
+  const MONTH = '(?:march|mar)';
+  const day = d => new RegExp(`\\b${d}(?:st|nd|rd|th)?\\s*${MONTH}\\b|\\b${MONTH}\\s*${d}(?:st|nd|rd|th)?\\b|\\b${d}[\\/.-]0?3\\b`, 'i');
+  const T10 = /\b10(?::|\.)?00\b|\b10\s?(?:am|a\.m\.)/i;
+  const T14 = /\b14(?::|\.)00\b|\b2(?::|\.)00\s?(?:pm|p\.m\.)|\b2\s?(?:pm|p\.m\.)/i;
+  const ROWS = [
+    { name: 'Digital Logic', course: /digital\s+logic|EC\s?302/i, date: day(19), time: T14, room: /hall\s*c\b/i },
+    { name: 'Communication Skills', course: /communication\s+skills|HS\s?201/i, date: day(20), time: T10, room: /hall\s*a\b/i },
+    { name: 'Data Structures', course: /data\s+structures|CS\s?301/i, date: day(21), time: T10, room: /hall\s*b\b/i },
+    { name: 'Environmental Studies', course: /environmental\s+studies|EV\s?101/i, date: day(25), time: T10, room: /hall\s*a\b/i },
+  ];
+  const words = s => (s.trim().match(/\S+/g) || []);
+  const norm = s => s.toLowerCase().replace(/[^a-z0-9₹]+/g, ' ').trim().split(' ').filter(Boolean);
+
+  function copiedRun(prompt, target, n) {
+    const t = norm(target), p = ' ' + norm(prompt).join(' ') + ' ';
+    for (let i = 0; i + n <= t.length; i++) {
+      const run = t.slice(i, i + n).join(' ');
+      if (p.includes(' ' + run + ' ')) return run;
+    }
+    return '';
+  }
+
+  function checkChallenge(prompt, output, target) {
+    const gate = [];
+    const pw = words(prompt).length;
+    if (!pw) gate.push('Paste your prompt in the first box.');
+    if (pw > 60) gate.push(`Your prompt has ${pw} words. The limit is 60; paste the memo into Copilot separately, not into the prompt.`);
+    const cp = pw ? copiedRun(prompt, target, 8) : '';
+    if (cp) gate.push(`Your prompt copies the target (“${cp} …”). Describe the result you want instead.`);
+    const lines = output.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    const checks = [];
+    if (!lines.length) return { gate: gate.concat('Paste the notice from Copilot in the second box.'), checks, score: 0, win: false, promptWords: pw };
+
+    // 1 Facts: one line per changed exam with course, date, start time and room
+    const miss = [];
+    ROWS.forEach(r => {
+      const ln = lines.find(l => r.course.test(l));
+      if (!ln) { miss.push(`${r.name} is missing`); return; }
+      const bad = [];
+      if (!r.date.test(ln)) bad.push('date');
+      if (!r.time.test(ln)) bad.push('start time');
+      if (!r.room.test(ln)) bad.push('room');
+      if (bad.length) miss.push(`${r.name}: wrong or missing ${bad.join(', ')}`);
+    });
+    checks.push({ name: 'Facts', pass: !miss.length, why: miss.join('; ') + (miss.length ? '. Check each row against the memo.' : '') });
+
+    // 2 Not yet approved: the Environmental Studies line says "to be confirmed"
+    const ev = lines.find(l => ROWS[3].course.test(l));
+    const tbc = ev && /to\s+be\s+confirmed|\bTBC\b/i.test(ev);
+    checks.push({ name: 'Not yet approved', pass: !!tbc, why: ev ? 'The Environmental Studies change is only proposed (subject to the Dean’s approval), but your notice states it as final. Mark it “to be confirmed”.' : 'The proposed Environmental Studies change is missing; include it, marked “to be confirmed”.' });
+
+    // 3 Private details
+    const priv = [];
+    if (/98450|12345/.test(output)) priv.push('a phone number');
+    if (/menon|kumar/i.test(output)) priv.push('a staff name');
+    if (/\bon leave\b|\bleave from\b|invigilat/i.test(output)) priv.push('staff leave or invigilation details');
+    checks.push({ name: 'Private details', pass: !priv.length, why: `Your notice includes ${priv.join(', ')}. That is internal; students must not see it.` });
+
+    // 4 Nothing added
+    const add = [];
+    if (/engineering\s+mathematics|MA\s?301/i.test(output)) add.push('Engineering Mathematics III, which did not change');
+    const extras = [[/\b(?:id|identity)\s*cards?\b/i, 'ID cards'], [/hall\s*tickets?|admit\s*cards?/i, 'hall tickets'], [/\b(?:15|10|20|30)\s*min/i, 'arrival times'],
+      [/\bearly\b|\bon time\b|\bpunctual/i, 'arriving early'], [/mobile\s*phones?|electronic|calculator/i, 'rules about devices'], [/penalt|disciplin|debar/i, 'penalties'],
+      [/good\s+luck|best\s+wishes|all\s+the\s+best/i, 'wishes'], [/let me know|hope this helps|would you like/i, 'chat text from Copilot']];
+    extras.forEach(([re, label]) => { if (re.test(output)) add.push(label); });
+    if (/\b(?:4|04|5|05|6|06|8|08)\s*(?:april|apr)\b|\b(?:april|apr)\s*\d/i.test(output)) add.push('a worked-out results date the memo does not give');
+    checks.push({ name: 'Nothing added', pass: !add.length, why: `Your notice adds ${add.join(', ')}. Use only what the memo says.` });
+
+    // 5 Shape: a header row with Date, Course, Time, Room in that order, at least four rows, and the contact line
+    const header = lines.find(l => /date[\s|\t:,]+.*course[\s|\t:,]+.*time[\s|\t:,]+.*room/i.test(l));
+    const rows = lines.filter(l => (l.split('|').length > 3 || l.split('\t').length > 3) && !/^\|?\s*-{2,}/.test(l));
+    const contact = lines.some(l => /\b214\b/.test(l) && /exam\s*cell/i.test(l));
+    const shapeWhy = [];
+    if (!header) shapeWhy.push('no table header with the columns Date, Course, Time, Room in that order');
+    if (rows.length < 5) shapeWhy.push('fewer than four table rows');
+    if (!contact) shapeWhy.push('no line giving the exam cell, extension 214');
+    checks.push({ name: 'Shape', pass: !shapeWhy.length, why: 'Your notice has ' + shapeWhy.join('; ') + '.' });
+
+    // 6 Length
+    const ow = (output.match(/[A-Za-z0-9₹]+(?:[’'][A-Za-z]+)?/g) || []).length;
+    checks.push({ name: 'Length', pass: ow <= 120, why: `Your notice has ${ow} words. Keep it to 120 or fewer.` });
+
+    const score = checks.filter(c => c.pass).length;
+    return { gate, checks, score, win: !gate.length && score === 6, promptWords: pw, outputWords: ow };
+  }
+  root.checkChallenge = checkChallenge;
+  if (typeof module !== 'undefined') module.exports = { checkChallenge };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+(function () {
+  var TARGET = "Revised end-semester exam schedule\nDate | Course | Time | Room\n19 March | Digital Logic (EC302) | 14:00\u201317:00 | Hall C\n20 March | Communication Skills (HS201) | 10:00\u201312:00 | Hall A (moved from Room 104)\n21 March | Data Structures (CS301) | 10:00\u201313:00 | Hall B\n25 March [to be confirmed] | Environmental Studies (EV101) | 10:00\u201312:00 | Hall A\nResults will be published 14 days after the last exam.\nQueries: exam cell, extension 214.";
+  var p = document.getElementById('chkPrompt'), o = document.getElementById('chkOut'), pw = document.getElementById('chkPW');
+  var res = document.getElementById('chkRes'), tries = document.getElementById('chkTries'), n = 0;
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  p.addEventListener('input', function () { var w = (p.value.trim().match(/\S+/g) || []).length; pw.textContent = w + ' word' + (w === 1 ? '' : 's') + (w > 60 ? ' (over the 60-word limit)' : ''); pw.className = 'chk-count' + (w > 60 ? ' over' : ''); });
+  document.getElementById('chkGo').addEventListener('click', function () {
+    n++; tries.textContent = 'Attempt ' + n;
+    var r = window.checkChallenge(p.value, o.value, TARGET), h = '';
+    r.gate.forEach(function (g) { h += '<p class="gate">' + esc(g) + '</p>'; });
+    if (r.checks.length) {
+      h += '<p class="score">' + r.score + ' of 6 checks pass</p><ul>';
+      r.checks.forEach(function (c) { h += '<li class="' + (c.pass ? 'ok' : '') + '">' + (c.pass ? '✓ ' : '✗ ') + '<b>' + esc(c.name) + '</b>' + (c.pass ? '' : ': ' + esc(c.why)) + '</li>'; });
+      h += '</ul>';
+    }
+    if (r.win) h = '<p class="win">Challenge complete: all six checks pass, with a ' + r.promptWords + '-word prompt. Raise your hand!</p>' + h;
+    res.innerHTML = h;
+  });
+})();
+</script>
+<!-- CHALLENGE END -->
+
+<section id="optional" class="concept" data-nav="Optional activities">
+  <p class="kicker">Optional activities</p>
+  <h2>Three extra activities for those who want more</h2>
+  <p class="intro">These three activities are not part of the main session. Try them on your own or with a colleague if you want more practice.</p>
+  <p>Each one extends an idea from the session and follows the same rhythm: a new chat in Copilot Chat (Work badge) for every run, prompt and data pasted in one go, and synthetic data only. They were not run in our rehearsal, so “What it showed” describes the expected outcome rather than a captured one.</p>
+  <ul class="plain">
+    <li><a href="#o1">Two roles, one policy</a> extends the 6C brief (slide 18).</li>
+    <li><a href="#o3">Ask three times</a> extends self-review (slide 27).</li>
+    <li><a href="#o4">Final challenge: the board note</a> extends slide 16 and brings the whole day together.</li>
+  </ul>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="o1" data-nav="Optional · Two roles, one policy">
+  <p class="kicker"><span class="tag">Optional activity</span>Extends slide 18 · the 6C brief</p>
+  <h2>Two roles, one policy: does a role change the facts?</h2>
+  <p class="intro"><b>The situation:</b> The finance office must explain one late-fee rule to two readers, staff and students. We run the same prompt twice, changing only the role, and check what each role adds. This lab extends slide 18.</p>
+  <p>The finance office has one late-fee rule and must explain it to two kinds of reader, staff and students. Giving the AI a role is the quickest way to change the reader. This activity asks what else the role changes. (See <a href="#s18">the 6C brief</a>, where the role is the first C, Character.)</p>
+  <div class="test">
+    <div><span class="n">1</span><b>We are testing</b><p>Does a role change the facts, or only the emphasis?</p></div>
+    <div><span class="n">2</span><b>The one difference</b><p>Only the role changes: a finance officer or a student counsellor. Each run goes in a new chat.</p></div>
+    <div><span class="n">3</span><b>Look for</b><p>Any sentence that the policy does not contain.</p></div>
+  </div>
+  <h3>Steps</h3>
+  <ol class="steps">
+    <li>Open a <b>new chat</b>. Copy <b>Run 1</b> (prompt and policy), paste it and send it.</li>
+    <li>Open another <b>new chat</b>. Copy <b>Run 2</b>, which is the same with the role changed, paste it and send it.</li>
+    <li>In each reply, underline every sentence that is not in the two-line policy.</li>
+  </ol>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Run 1 · finance officer (prompt + policy, in one go)</span><button class="copy" type="button" data-target="d-c9">Copy</button></div>
+  <pre id="d-c9">Act as a finance officer. Explain this fee policy in three sentences. Use only what is below. Policy (synthetic): Late fee: ₹500 per week after the due date. Waiver possible on documented hardship.</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Run 2 · student counsellor (prompt + policy, in one go)</span><button class="copy" type="button" data-target="d-c10">Copy</button></div>
+  <pre id="d-c10">Act as a student counsellor. Explain this fee policy in three sentences. Use only what is below. Policy (synthetic): Late fee: ₹500 per week after the due date. Waiver possible on documented hardship.</pre></div>
+  <details><summary>What it showed (open after the activity)</summary>
+    <p>This activity was not run in our rehearsal, so here is what to expect. Both replies should keep the same two facts: ₹500 a week, and a waiver on documented hardship. The emphasis differs, and each role is likely to add something the policy never said.</p>
+    <p>An illustrative finance-officer reply might add “Record the evidence and the approval for audit”, which is an audit instruction that is not in the policy. An illustrative counsellor reply might add “talk to us before the due date”, which is an invitation the policy never makes. Other additions to watch for are who approves the waiver and a deadline to apply.</p>
+    <p>If neither reply adds anything, look at what the role did change (the order, the tone, what comes first) and ask which version each reader would act on. The point about emphasis still holds. Avoid titles such as “world-class expert”: they make the tone more confident, not the content more accurate.</p>
+    <div class="callout"><p class="clabel">Take-away</p><p>A role changes the emphasis and can invite additions dressed as good advice. Check every line against the source.</p></div>
+  </details>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="o3" data-nav="Optional · Ask three times">
+  <p class="kicker"><span class="tag">Optional activity</span>Extends slide 27 · self-review</p>
+  <h2>Ask three times: does asking again make the answer right?</h2>
+  <p class="intro"><b>The situation:</b> The student grievance desk triages dozens of emails a week. We rate one email’s severity in three fresh chats and compare before trusting the rating. This lab extends slide 27.</p>
+  <p>The student grievance desk gets dozens of emails a week and has to decide which ones need action first. An AI triage rating is tempting, but the same prompt can give different answers in different chats, and a wrong “Medium” on the email below would miss the Friday results deadline.</p>
+  <div class="test">
+    <div><span class="n">1</span><b>We are testing</b><p>Does asking three times make the answer right?</p></div>
+    <div><span class="n">2</span><b>The one difference</b><p>There is none: the same paste goes into three fresh chats. Work in pairs: one person types and the other records each rating and its signals.</p></div>
+    <div><span class="n">3</span><b>Look for</b><p>Is the rating the same each time? If not, which signal moved?</p></div>
+  </div>
+  <h3>Steps</h3>
+  <ol class="steps">
+    <li>Work in pairs: one person types and the other records.</li>
+    <li>Open a <b>new chat</b>. Copy <b>Case 1</b> (prompt and email), paste it and send it. Record the rating and the signals it cites.</li>
+    <li>Repeat the same paste in a second and then a third new chat, recording each time.</li>
+    <li>Compare the three: are they all the same? If they differ, find which signal one run missed or weighed differently.</li>
+    <li>If you finish early, try Case 2 or Case 3 in the same way.</li>
+  </ol>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Case 1 · grievance (prompt + email, in one go)</span><button class="copy" type="button" data-target="d-c12">Copy</button></div>
+  <pre id="d-c12">Rate the severity of this email: Low, Medium or High. Cite the signals in the email that you used. Propose the first response, in one sentence. Email (synthetic): “My internal marks for two courses were entered wrongly. Results are published on Friday, and I have emailed the exam office twice with no reply.”</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Case 2 · leave request (prompt + request, in one go)</span><button class="copy" type="button" data-target="d-c13">Copy</button></div>
+  <pre id="d-c13">Rate the urgency of this leave request: Low, Medium or High. Cite the signals you used. Propose the first response, in one sentence. Request (synthetic): “Dear HOD, I request leave from 3 to 7 March to be with my father, who has surgery in Mysuru on 4 March. My internal assessment for Data Structures is on 5 March. I have informed my mentor. R. Naik, 2nd year B.Tech.”</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Case 3 · invoice (prompt + documents, in one go)</span><button class="copy" type="button" data-target="d-c14">Copy</button></div>
+  <pre id="d-c14">Decide whether to approve, query or reject this invoice. Cite the lines you used. Propose the first response to the vendor, in one sentence. Purchase order PO-4471 (synthetic): 20 compound microscopes at ₹18,500 each, plus installation and calibration at ₹12,000; PO value ₹3,82,000. Invoice INV-208 from BrightLab Supplies (synthetic): Line 1, 20 compound microscopes at ₹18,500 = ₹3,70,000. Line 2, installation and calibration = ₹12,000. Line 3, annual maintenance, year 1 = ₹45,000. Total ₹4,27,000.</pre></div>
+  <details><summary>What it showed (open after the activity)</summary>
+    <p>This activity was not run in our rehearsal, so here is what to expect. If all three runs agree, that shows consistency, not correctness: three runs can share the same blind spot. If they differ, the difference shows you where to look, so trace which signal moved.</p>
+    <p>Case 2 may split on the clash with the internal assessment on 5 March. Case 3 may split on line 3, the annual maintenance, which the purchase order never ordered.</p>
+    <p>Either way, a person checks the facts. For Case 1, check that Friday is the real results date, that two emails were really sent, and whether the marks change a result. For Case 2, check the assessment date and the rule for a missed internal assessment. For Case 3, check the purchase-order value and whether maintenance was ordered. Then a person decides.</p>
+    <div class="callout"><p class="clabel">Take-away</p><p>Agreement is a signal, not proof; disagreement shows where to look. A person checks the facts and decides.</p></div>
+  </details>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="o4" data-nav="Optional · Final challenge: the board note">
+  <p class="kicker"><span class="tag">Optional activity</span>Extends slide 16 · brings the day together</p>
+  <h2>Final challenge: turn one KPI table into one honest board note</h2>
+  <p class="intro"><b>The situation:</b> Every quarter someone turns a KPI table into a note for the Board of Management. We fill the 6C template, run it, score the note with the five checks and revise. This challenge extends slide 16.</p>
+  <p>Every quarter someone turns a KPI table into a note for the Board of Management, and the board reads the note, not the table. This challenge puts the whole day together on that one task: you brief with the 6C, run it, score it with the five checks, and then red-team it.</p>
+  <div class="flow"><span>1 · Fill the 6C</span><i>→</i><span>2 · Run</span><i>→</i><span>3 · Score it</span><i>→</i><span>4 · Revise (optional)</span><i>→</i><span>5 · Red-team</span></div>
+  <div class="test">
+    <div><span class="n">1</span><b>We are testing</b><p>Does a good brief keep a board note honest about missing data?</p></div>
+    <div><span class="n">2</span><b>The one difference</b><p>You paste your filled 6C brief with the table, then red-team the note in the same chat. Work in pairs: one writes, one scores. Revising is optional.</p></div>
+    <div><span class="n">3</span><b>Look for</b><p>What did the note do with the “—” in Q3 satisfaction: fill it, average it, or flag it?</p></div>
+  </div>
+  <h3>Steps</h3>
+  <p>Work in pairs: one person writes and the other scores. The five steps below match the five stages above.</p>
+  <ol class="steps">
+    <li><b>Fill the 6C.</b> Copy the 6C template and fill in the brackets. An illustrative filled-in version is shown below the template.</li>
+    <li><b>Run.</b> Open a <b>new chat</b>. Paste your filled template with the KPI table underneath, in one go, and send it.</li>
+    <li><b>Score it.</b> The scorer scores the note with the five checks: accuracy, relevance, completeness, traceability and usability.</li>
+    <li><b>Revise (optional).</b> If you want, ask in the same chat for one revision that fixes what the scoring found.</li>
+    <li><b>Red-team.</b> In the same chat, paste the red-team prompt. Then find what your note did with the missing Q3 satisfaction figure.</li>
+  </ol>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Step 1 · the 6C template (fill in the brackets)</span><button class="copy" type="button" data-target="d-c15">Copy</button></div>
+  <pre id="d-c15">C1 Act as [relevant professional perspective].
+C2 [Approved data only]. Define [key terms]. Audience: [who reads it].
+C3 [One clear action].
+C4 Use only supplied facts. Label assumptions. Do not invent missing data.
+C5 [Table or brief] with [sections], [length].
+C6 Before finalising, run the five checks (accuracy, relevance, completeness, traceability, usability) and list open questions.</pre></div>
+  <h3>An illustrative filled-in template</h3>
+  <table>
+    <tbody>
+      <tr><td>C1</td><td>Act as a senior planning analyst writing a paper for the Board.</td></tr>
+      <tr><td>C2</td><td>Use the KPI table below (synthetic). Retention = first-years still enrolled. Audience: the Board of Management.</td></tr>
+      <tr><td>C3</td><td>Identify the three most important changes and the decision needed.</td></tr>
+      <tr><td>C4</td><td>Calculate only from the table. Label causes as hypotheses. Flag any quarter with missing data.</td></tr>
+      <tr><td>C5</td><td>One page: three findings with figures, hypotheses, decisions. Under 300 words.</td></tr>
+      <tr><td>C6</td><td>Check every figure against the table. List what the board may ask that the data cannot answer.</td></tr>
+    </tbody>
+  </table>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Step 2 · the KPI table (paste it under your filled template, in one go)</span><button class="copy" type="button" data-target="d-c16">Copy</button></div>
+  <pre id="d-c16">KPI table, 2024–25 (synthetic). Q1 Apr–Jun 2024, Q2 Jul–Sep 2024, Q3 Oct–Dec 2024, Q4 Jan–Mar 2025.
+KPI | Q1 | Q2 | Q3 | Q4 | Target 2024–25
+Applications received | 3,950 | 2,100 | 1,240 | 2,880 | 11,000 for the year
+Retention, % of first-years still enrolled | 88 | 87 | 85 | 84 | 90
+Placement, % of final-years placed (cumulative) | 18 | 41 | 63 | 72 | 80
+Research income, ₹ lakh | 46 | 52 | 38 | 71 | 220 for the year
+Student satisfaction, survey score out of 5 | 3.9 | 3.8 | — | 3.6 | 4.0
+Students per staff member | 18.2 | 18.6 | 19.4 | 20.1 | 18.0
+— Q3 satisfaction survey was not run; no data.</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Step 5 · red-team prompt (same chat)</span><button class="copy" type="button" data-target="d-c17">Copy</button></div>
+  <pre id="d-c17">Find the three weakest points in this note and how a sceptical board member would attack them.</pre></div>
+  <h3>Want another round? Two more data packs</h3>
+  <p>Use the same 6C template with a different command (C3), and paste the pack under it in a new chat.</p>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Pack B · vendor quotes (your filled 6C with C3: “Compare the three quotes and recommend one”)</span><button class="copy" type="button" data-target="d-c18">Copy</button></div>
+  <pre id="d-c18">Vendor P, LearnGrid: ₹18 lakh a year for up to 5,000 users; LMS and video; proctoring is an add-on at ₹4 lakh a year; support in business hours, reply the next working day; 3-year contract, price rises 7% a year. Vendor Q, CampusOne: ₹52 lakh for 3 years, all inclusive (LMS, video, proctoring); support every day, critical issues answered the same day; 3-year contract; exit fee ₹5 lakh. Vendor R, EduSphere: ₹15 lakh a year for up to 3,000 users, then ₹400 per extra user a year; LMS and video, no proctoring; email support, reply the next working day; 1-year contract, renewable.</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Pack C · re-evaluation policy (your filled 6C with C3: “Write a student FAQ of six questions”)</span><button class="copy" type="button" data-target="d-c19">Copy</button></div>
+  <pre id="d-c19">1. A student may apply for re-evaluation of any theory paper within 10 days of the publication of results, through the examination portal. 2. The fee is ₹750 per paper, refunded if the mark changes by 10% or more of the maximum. 3. A second examiner, not the first, re-evaluates the script. If the two marks differ by more than 15% of the maximum, a third examiner evaluates it, and the average of the two closest marks is final. 4. The revised mark replaces the original, whether higher or lower. 5. Re-evaluation results are published within 30 days of the last date for applications. 6. Practical, project and viva marks are not eligible.</pre></div>
+  <details><summary>What it showed (open after the activity)</summary>
+    <p>This challenge was not run in our rehearsal, so here is what a good note does (illustrative, not captured):</p>
+    <ul class="plain">
+      <li>It totals from the table: applications reached 10,170, which is 92% of the 11,000 target, and research income reached ₹207 lakh, which is 94% of ₹220 lakh.</li>
+      <li>It notes that students per staff member rose every quarter, from 18.2 to 20.1, against a target of 18.0.</li>
+      <li>It notes that retention fell from 88% to 84% against a target of 90%, and labels any link to staffing as a hypothesis, not a cause.</li>
+      <li>It notes that placement reached 72% against a target of 80%.</li>
+      <li>It says plainly that Q3 satisfaction is missing, so 3.8 to 3.6 is two readings, not a trend.</li>
+      <li>It proposes decisions: a staffing review, and running the satisfaction survey next quarter.</li>
+    </ul>
+    <p>If your note filled in or averaged the “—”, that is the lesson: the board would read “satisfaction is falling” as a fact. If it flagged the gap, check what the red-team found that the note missed.</p>
+    <p>For Pack B, a good comparison puts all three vendors on the same basis: three years, 5,000 users, with proctoring. For Pack C, a good FAQ says plainly that the mark can go down.</p>
+    <div class="callout"><p class="clabel">Take-away</p><p>A good note says what is missing and invents nothing. Red-team it before the board does.</p></div>
+  </details>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+<section id="deeper" class="concept" data-nav="Go deeper">
+  <p class="kicker">Go deeper</p>
+  <h2>These pages take each activity further, for anyone who wants more</h2>
+  <p class="intro">The pages below extend the session with more background, worked examples and techniques, grouped by the activity they build on. You do not need them to use what you learned today, so read them when a topic becomes useful to you.</p>
+  <p class="note">Every example, figure and document below is synthetic or illustrative unless it names a real public source.</p>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="g1" class="concept" data-nav="· How the model works">
+  <p class="kicker"><span class="tag">Go deeper</span>Extends Activity 1 · Background</p>
+  <h2>Two ideas explain how the model produces an answer</h2>
+  <p class="intro">These pages explain attention, and how the model reads text in tokens within a limited context.</p>
+
+  <h3>A simplified transformer view: attention is a mechanism, not understanding</h3>
+  <p>Inside the model, attention lets each word weigh every other word in the sentence. In the sentence “The committee approved the budget because it was within limits”, the model has to work out which word “it” means. The illustrative weights below show where the attention from “it” goes.</p>
+  <div class="bars" role="img" aria-label="Attention from the word it: budget 62 percent, committee 18, limits 8, approved 5">
+    <div class="bar"><span>budget</span><span style="width:100%"></span><span>62%</span></div>
+    <div class="bar low"><span>committee</span><span style="width:29%"></span><span>18%</span></div>
+    <div class="bar low"><span>limits</span><span style="width:13%"></span><span>8%</span></div>
+    <div class="bar low"><span>approved</span><span style="width:8%"></span><span>5%</span></div>
+  </div>
+  <p>The text passes through four steps: the input is split into tokens, the tokens become embeddings with their positions, many attention layers process them, and the model produces probabilities for the next token.</p>
+  <div class="flow"><span>Input tokens</span><i>→</i><span>Embeddings + position</span><i>→</i><span>Attention layers (×N)</span><i>→</i><span>Next-token probabilities</span></div>
+  <p>The weights are learned from patterns in training text. The model resolves “it” to “budget” statistically; nobody told it what a budget is. This pattern-matching is why it can be confidently wrong.</p>
+
+  <h3>Tokens, context and embeddings: the model reads in pieces, holds only so much, and turns meaning into numbers</h3>
+  <p><b>Tokens.</b> A token is a chunk of text, not always a whole word: “Prompting is a skill.” might be split as <code>Prompt</code> <code>ing</code> <code>␣is</code> <code>␣a</code> <code>␣skill</code> <code>.</code> (␣ marks a space). The same sentence can take very different numbers of tokens in different languages. In one illustrative split, “The meeting has been postponed to Monday.” took about 8 tokens in English, about 14 in Hindi and about 18 in Kannada; exact counts vary by model.</p>
+  <p><b>Context window.</b> The context window is what the model can see right now: your brief, an attached file and your new message. As a chat grows, older turns drop out. One page is roughly 600–700 tokens, and window sizes range from tens of thousands to over a million tokens, depending on the tool.</p>
+  <p><b>Embeddings.</b> The model turns meaning into numbers, and similar meanings get similar numbers, so they sit close together. “Dean”, “registrar” and “principal” sit near each other; so do “fees”, “budget” and “grant”. This is why the model finds related ideas even when the words differ.</p>
+  <table>
+    <thead><tr><th>Idea</th><th>What it means for you</th></tr></thead>
+    <tbody>
+      <tr><td><b>Cost</b></td><td>Paid tools bill per token, so long files cost more.</td></tr>
+      <tr><td><b>Long documents</b></td><td>A long document may not fit. Ask what was read, or split it.</td></tr>
+      <tr><td><b>Indian languages</b></td><td>Indian languages often need more tokens, so less fits in one prompt.</td></tr>
+    </tbody>
+  </table>
+  <p class="note">You can see this yourself: paste the same sentence in English and in Kannada into a public tokenizer and compare the counts.</p>
+
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="g2" class="concept" data-nav="· When AI starts to act for you">
+  <p class="kicker"><span class="tag">Go deeper</span>Extends Activity 4 · Using it safely</p>
+  <h2>When AI starts to act for you, add approval gates</h2>
+  <p class="intro">This page explains what changes when AI moves from drafting text to taking actions for you, and the gates to set before it does.</p>
+
+
+
+
+
+  <h3>From answering to acting: more autonomy needs more approval gates</h3>
+  <p>AI tools are moving from drafting text to taking actions on your behalf. At each step up, the AI does more on its own, so the organisation needs more points where a person approves before it continues.</p>
+  <table>
+    <thead><tr><th>Level</th><th>What it does</th><th>Your role</th></tr></thead>
+    <tbody>
+      <tr><td><b>Chat</b></td><td>It answers and drafts.</td><td>You copy, check and act.</td></tr>
+      <tr><td><b>Assistant</b></td><td>It works in your files, mail and calendar, for example drafting replies in your inbox.</td><td>You approve each output.</td></tr>
+      <tr><td><b>Agent</b></td><td>It browses, fills forms and runs multi-step tasks, for example booking rooms or submitting requests.</td><td>It acts alone between the approval gates you set.</td></tr>
+    </tbody>
+  </table>
+  <h3>Set these four gates before any agent goes live</h3>
+  <ol class="steps">
+    <li><b>Start read-only:</b> let it look before it can change anything.</li>
+    <li><b>Approve before acting:</b> require sign-off before anything is sent, paid or deleted.</li>
+    <li><b>Keep an activity log:</b> record every action so it can be reviewed.</li>
+    <li><b>Name an owner:</b> one person answers for what it does.</li>
+  </ol>
+  <p class="note">These gates apply to any agent a vendor offers, whatever the product.</p>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="g3" class="concept" data-nav="· When no examples are needed">
+  <p class="kicker"><span class="tag">Go deeper</span>Extends Activity 6 · Practice</p>
+  <h2>Sometimes a direct instruction with no examples is enough</h2>
+  <p class="intro">This page shows when a direct instruction with no examples (zero-shot) is enough.</p>
+
+
+  <h3>Zero-shot: a direct ask is enough for familiar, well-defined work</h3>
+  <p>Zero-shot means a clear instruction with no examples. It is the everyday mode, and it works well when the instruction sets explicit limits.</p>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Task A · Minutes to actions (add your minutes after the prompt)</span><button class="copy" type="button" data-target="e-c4">Copy</button></div>
+  <pre id="e-c4">Turn these minutes into a table: decision · owner · due date. Use only what the minutes state. If an owner or date is missing, write ‘not stated’.</pre></div>
+  <table>
+    <thead><tr><th>Decision</th><th>Owner</th><th>Due</th></tr></thead>
+    <tbody>
+      <tr><td>Adopt revised attendance rule</td><td>Registrar</td><td>30 Jun</td></tr>
+      <tr><td>Pilot evening library hours</td><td>Librarian</td><td><b>not stated</b></td></tr>
+      <tr><td>Audit lab safety records</td><td>Dean, Engg.</td><td>15 Jul</td></tr>
+    </tbody>
+  </table>
+  <p>The “not stated” cell shows the limit working: that one instruction stops the model inventing a due date.</p>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Task B · Draft a circular (add your note after the prompt)</span><button class="copy" type="button" data-target="e-c5">Copy</button></div>
+  <pre id="e-c5">Draft a 150-word circular to all faculty on the revised evaluation timeline. Formal tone. State the effective date and a contact office. Add nothing beyond the note below.</pre></div>
+  <p>In the example output, the circular came from the Office of the Registrar, with the subject “Revised evaluation timeline”, effective 1 August, and the Examinations Office as the contact.</p>
+  <table>
+    <thead><tr><th>Zero-shot is enough when…</th><th>For example</th></tr></thead>
+    <tbody>
+      <tr><td>The task is familiar.</td><td>Summarise, draft, convert, extract.</td></tr>
+      <tr><td>You can describe the output.</td><td>Columns, length, tone, audience.</td></tr>
+      <tr><td>The limits are explicit.</td><td>Scope, sources, what not to do.</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Zero-shot is not enough for house styles: fixed formats or fixed label sets need examples.</p>
+
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="g4" class="concept" data-nav="· Images and context">
+  <p class="kicker"><span class="tag">Go deeper</span>Extends Activity 7 · Practice</p>
+  <h2>Give the model the right material: images with clear instructions, and a curated context</h2>
+  <p class="intro">These pages cover prompting with images and building a context pack.</p>
+
+  <h3>Prompting with images: say what to look at, what to extract and in what format</h3>
+  <p>Images work like documents. Tell the model exactly what to extract and what to do when it cannot read something, and ask it to flag anything unreadable.</p>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Strong image prompt (attach the photo)</span><button class="copy" type="button" data-target="e-c6">Copy</button></div>
+  <pre id="e-c6">From this photo of a lab booking board, list each booking as a table: room, equipment, date, time. Mark unreadable entries ‘unclear’. Do not guess.</pre></div>
+  <p>In the example, a photo of the week 46 lab booking board produced this table. The smudged entry is flagged, not guessed.</p>
+  <table>
+    <thead><tr><th>Room</th><th>Equipment</th><th>Date</th><th>Time</th></tr></thead>
+    <tbody>
+      <tr><td>Lab 2</td><td>Spectrometer</td><td>12 Nov</td><td>10:00–12:00</td></tr>
+      <tr><td>Lab 4</td><td>3D printer</td><td>12 Nov</td><td>14:00–16:00</td></tr>
+      <tr><td>Lab 2</td><td>Fume hood</td><td>13 Nov</td><td>09:00–11:00</td></tr>
+      <tr><td>Lab 5</td><td><b>unclear</b></td><td>13 Nov</td><td>15:00</td></tr>
+    </tbody>
+  </table>
+  <p>Without “Do not guess”, most models will invent a plausible piece of equipment for the smudged row.</p>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Check each row against the photo. Never photograph screens or papers that show personal data.</p></div>
+
+  <h3>Context engineering: give the model the material it needs, not everything you have</h3>
+  <p>A good context pack holds the goal, the data and the rules for the task. It is worth the extra effort for almost any task except the simplest.</p>
+  <p>Use it when the task depends on your data, definitions or audience; skip it for general-knowledge questions.</p>
+  <table>
+    <tbody>
+      <tr><td><b>When to use it</b></td><td>The task depends on your data, definitions or audience.</td></tr>
+      <tr><td><b>When not to</b></td><td>General-knowledge questions.</td></tr>
+      <tr><td><b>Usual failure</b></td><td>Pasting everything, so the key fact gets lost.</td></tr>
+      <tr><td><b>Try it</b></td><td>Build a 5-part context pack for your next committee briefing note.</td></tr>
+      <tr><td><b>Self-check</b></td><td>Could a colleague do the task from your context alone?</td></tr>
+    </tbody>
+  </table>
+
+
+
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="g5" class="concept" data-nav="· Reviewing and asking twice">
+  <p class="kicker"><span class="tag">Go deeper</span>Extends Activities 1 and 8 · Practice</p>
+  <h2>Make the model critique its draft against a standard, and compare independent runs before you trust them</h2>
+  <p class="intro">These pages cover self-review against a standard, and self-consistency: running the same task more than once before you trust it.</p>
+
+
+  <h3>Self-review: make the model critique its draft against your standard, then revise</h3>
+  <p>This technique (research name: Reflexion) is worth the extra effort for most tasks beyond simple ones.</p>
+  <p>Use it when you are improving a draft against a stated standard; skip it when you cannot state the criteria.</p>
+  <table>
+    <tbody>
+      <tr><td><b>When to use it</b></td><td>Improving a draft against a stated standard.</td></tr>
+      <tr><td><b>When not to</b></td><td>When you cannot state the criteria.</td></tr>
+      <tr><td><b>Usual failure</b></td><td>Asking it to “make it better” with no criteria.</td></tr>
+      <tr><td><b>Try it</b></td><td>Write 4 criteria for a reply to a parent’s complaint; critique, revise and list the changes.</td></tr>
+      <tr><td><b>Self-check</b></td><td>Did the revision introduce any new error?</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Self-consistency: classify a security disclosure in three fresh chats</h3>
+  <p><b>The situation:</b> The IT office receives an email claiming a critical flaw in the student portal. We classify its urgency in three fresh chats; agreement is a signal, and the security owner decides.</p>
+  <p>Classify the same email in three fresh chats and compare. Agreement is a signal, and a human still decides. Paste the task and the email together in each new chat.</p>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Task + email (paste in three new chats)</span><button class="copy" type="button" data-target="e-c12">Copy</button></div>
+  <pre id="e-c12">Classify urgency, cite the signals, list missing information and propose the first safe response.
+
+From: security.researcher@example.org
+Subject: Critical vulnerability in your student portal
+
+I have found a flaw in your student portal. It may allow access to all user data. A proof of concept is attached. Please fix this urgently.</pre></div>
+  <p>The email contains a claim (a flaw that may allow access to all user data), evidence (an attached proof of concept) and a request (fix it urgently).</p>
+  <p>Compare your three ratings. What must still happen before anyone acts on them? Decide before you open the answer.</p>
+  <details><summary>The answer (open after you have decided)</summary>
+    <p>In the example, all three runs said <b>High</b>. If runs agree, the result goes to a human security review; if they disagree, trace why.</p>
+    <p><b>High priority.</b> Preserve the report, acknowledge receipt, route it to the security owner and validate the proof of concept in a controlled environment.</p>
+    <p>The email alone does not prove the flaw can be exploited. Agreement across fresh chats raises confidence but proves nothing, because three runs can share the same blind spot. The human security owner decides, and nobody “fixes” production on the basis of an email.</p>
+  </details>
+
+  <h3>Ask twice: run the same task independently and compare before you trust it</h3>
+  <p>This technique (research name: self-consistency) is worth the extra effort only for fairly complex tasks.</p>
+  <p>Use it when the task is a classification, a calculation or a structured judgement; skip it for creative drafting.</p>
+  <table>
+    <tbody>
+      <tr><td><b>When to use it</b></td><td>Classification, arithmetic, structured judgements.</td></tr>
+      <tr><td><b>When not to</b></td><td>Creative drafting.</td></tr>
+      <tr><td><b>Usual failure</b></td><td>Treating agreement as proof.</td></tr>
+      <tr><td><b>Try it</b></td><td>Rate the severity of one grievance 3 times in fresh chats and compare.</td></tr>
+      <tr><td><b>Self-check</b></td><td>Did you trace every disagreement and verify independently?</td></tr>
+    </tbody>
+  </table>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="g6" class="concept" data-nav="· Staged work and comparison">
+  <p class="kicker"><span class="tag">Go deeper</span>Extends Activity 9 · Practice</p>
+  <h2>Break big work into checked stages, and compare genuinely different options on the same criteria</h2>
+  <p class="intro">These pages show staged work for long reports, prompt chaining, and structured comparison of alternatives.</p>
+
+  <h3>Checked stages, one job each</h3>
+  <p><b>The situation:</b> The IQAC office is drafting the self-study report for accreditation, with dozens of criteria that each need data and evidence. One prompt gives numbers nobody can trace, so the work is split into checked stages.</p>
+  <p>The IQAC office is drafting the self-study report for accreditation: dozens of criteria, each needing data, evidence and a narrative. Asked in one prompt, AI returns a fluent report whose numbers nobody can trace, and the error is found, if at all, by the committee. Instead, use one prompt per stage, a written hand-off, a check at every step, and a named person at the end.</p>
+  <table>
+    <thead><tr><th>Stage</th><th>Prompt (shortened)</th><th>Hand-off</th><th>Check before moving on</th></tr></thead>
+    <tbody>
+      <tr><td>1 · Map</td><td>“List each criterion and the evidence it needs, in order.”</td><td>Criteria map</td><td>Are all criteria listed?</td></tr>
+      <tr><td>2 · Tabulate</td><td>“Build the data table for criterion 1 only, from this extract.”</td><td>Draft table</td><td>Is there a source for each row?</td></tr>
+      <tr><td>3 · Check</td><td>“Check each figure against the records. List any mismatch.”</td><td>Checked table</td><td>Are mismatches listed?</td></tr>
+      <tr><td>4 · Write</td><td>“Write the narrative from this checked table only.”</td><td>Draft section</td><td>Is nothing unchecked?</td></tr>
+      <tr><td>5 · Assemble</td><td>“Join the sections. Flag any figure that disagrees.”</td><td>Full draft</td><td>Do the sections agree?</td></tr>
+      <tr><td>Human gate</td><td>The IQAC coordinator reads the full draft against the records, then signs it off.</td><td>To committee, signed off by name</td><td></td></tr>
+    </tbody>
+  </table>
+  <p>Write each hand-off down, and fix an error where it starts: if stage 2 is wrong, fix it at stage 2, before it flows into the narrative. The last step is a gate, not a prompt. The example is synthetic.</p>
+  <p>This works for any large document built from data and evidence, such as self-study reports, annual reports, programme reviews and tender evaluations, but it is not worth it for a one-page email. For a tender, the stages are: extract the requirements with clause numbers; check the bid against each (met, not met, unclear); rank the gaps by risk; the procurement officer verifies the gaps against the tender; then write a one-page summary for the purchase committee.</p>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>The result is a report where every figure has been checked once, at the stage where it was made, and a named person who can answer for it. Ask yourself who is the named person at the gate for your office’s reports.</p></div>
+  <p class="note">Research names for this approach: least-to-most prompting and prompt chaining.</p>
+
+  <h3>Staged work, worked: an annual report, section by section</h3>
+  <p><b>The situation:</b> The communications office is writing the annual report. Each prompt does one section and builds on the checked output of the one before it, so errors cannot spread.</p>
+  <p>Each prompt builds on the checked output of the one before it: outline, fact sheet, Academics, Research, assemble.</p>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Prompt 1 · outline</span><button class="copy" type="button" data-target="e-c13">Copy</button></div>
+  <pre id="e-c13">List the sections of our annual report and the data each needs. Do not write any content yet.</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Prompt 2 · fact sheet (attach your figures)</span><button class="copy" type="button" data-target="e-c14">Copy</button></div>
+  <pre id="e-c14">From the attached figures, build a fact sheet. Mark any figure without a source as “unverified”.</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Prompt 3 · Academics section (after a person has checked the fact sheet)</span><button class="copy" type="button" data-target="e-c15">Copy</button></div>
+  <pre id="e-c15">Using only the checked fact sheet, draft the Academics section in 300 words.</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Prompt 4 · Research and Placements</span><button class="copy" type="button" data-target="e-c16">Copy</button></div>
+  <pre id="e-c16">Draft Research and Placements the same way, in the same tone.</pre></div>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Prompt 5 · assemble</span><button class="copy" type="button" data-target="e-c17">Copy</button></div>
+  <pre id="e-c17">Assemble the report, then list every claim that is not in the fact sheet.</pre></div>
+  <p>The key point is the gate between stages: a person checks the fact sheet before any prose is written, so errors cannot multiply downstream.</p>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Each stage must use the previous stage’s checked output. Ask for owners, sources and open questions at every step, and reject any draft that cites a figure that is not in the fact sheet.</p></div>
+
+  <h3>Staged work: break big work into ordered stages, checking each one</h3>
+  <p>This technique (research name: least-to-most prompting) is worth the extra effort for tasks of middling complexity and above.</p>
+  <p>Use it when a big task has parts that depend on each other; skip it for simple one-step tasks.</p>
+  <table>
+    <tbody>
+      <tr><td><b>When to use it</b></td><td>Big tasks with dependent parts.</td></tr>
+      <tr><td><b>When not to</b></td><td>Simple one-step tasks.</td></tr>
+      <tr><td><b>Usual failure</b></td><td>Skipping the check between stages.</td></tr>
+      <tr><td><b>Try it</b></td><td>Split your next annual-report section into 4 ordered subtasks.</td></tr>
+      <tr><td><b>Self-check</b></td><td>Does each stage use the previous stage’s checked output?</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Prompt chaining: separate stages with explicit hand-offs and a human gate</h3>
+  <div class="flow"><span>Extract</span><i>→</i><span>Analyse</span><i>→</i><span>Draft</span><i>→</i><span>Human gate</span></div>
+  <p>Prompt chaining is worth the extra effort only for fairly complex tasks.</p>
+  <p>Use it when a workflow has distinct stages; skip it for short tasks, where the overhead is not worth it.</p>
+  <table>
+    <tbody>
+      <tr><td><b>When to use it</b></td><td>Workflows with distinct stages.</td></tr>
+      <tr><td><b>When not to</b></td><td>Short tasks, where the overhead is not worth it.</td></tr>
+      <tr><td><b>Usual failure</b></td><td>An unclear hand-off between stages.</td></tr>
+      <tr><td><b>Try it</b></td><td>Chain Extract → Analyse → Draft on a public tender document.</td></tr>
+      <tr><td><b>Self-check</b></td><td>Is each stage’s input and output written down?</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Compare alternatives on the same criteria: ask for genuinely different options, score each the same way, then choose and test</h3>
+  <p>Leaders already compare options. The value here is forcing the AI to produce options that are genuinely different, and to score them on your criteria rather than its own.</p>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Decision-support prompt</span><button class="copy" type="button" data-target="e-c18">Copy</button></div>
+  <pre id="e-c18">Propose three genuinely different LMS options for a 9,000-student university. Score each on the same five criteria, show the trade-offs and recommend a pilot, not a final choice.</pre></div>
+  <table>
+    <thead><tr><th>Criterion</th><th>A · Extend our open-source LMS (self-hosted, full data control)</th><th>B · Cloud SaaS platform (per-student licence, fast to launch)</th><th>C · Shared consortium platform (cost shared with partner universities)</th></tr></thead>
+    <tbody>
+      <tr><td>Five-year cost</td><td>Strong</td><td>Fair</td><td>Strong</td></tr>
+      <tr><td>Fit with student records</td><td>Fair</td><td>Strong</td><td>Weak</td></tr>
+      <tr><td>Data stays in India</td><td>Strong</td><td>Check</td><td>Strong</td></tr>
+      <tr><td>Staff effort to run</td><td>Weak</td><td>Strong</td><td>Fair</td></tr>
+      <tr><td>Ease of exit</td><td>Strong</td><td>Weak</td><td>Fair</td></tr>
+    </tbody>
+  </table>
+  <p><b>Recommendation:</b> pilot B in one school for a semester, with an India data-region clause and a tested exit plan, and keep A as the fallback. No option wins everything, so the output is a trade-off and a pilot, not a verdict. The options and scores are illustrative.</p>
+  <p class="note">Research name for this pattern: Tree of Thoughts.</p>
+
+  <h3>Compare alternatives, worked: positioning a new programme</h3>
+  <p><b>The situation:</b> The university is planning a one-year PG Diploma in Applied AI for working professionals. We ask the AI for three genuinely different positioning routes, judged on the same criteria.</p>
+  <p>Ask for three genuinely different routes, judged on the same criteria, before anyone picks a favourite.</p>
+  <div class="box"><div class="boxhead"><span class="boxlabel">Prompt</span><button class="copy" type="button" data-target="e-c19">Copy</button></div>
+  <pre id="e-c19">Develop three distinct positioning routes for a new one-year PG Diploma in Applied AI for working professionals. Compare them on demand, delivery cost, credibility, differentiation and ease of testing. Give one risk and one low-cost experiment per route. Recommend one, and say what evidence would change your mind.</pre></div>
+  <ul class="plain">
+    <li><b>Route A · Career switch:</b> “Move into an AI role.”</li>
+    <li><b>Route B · Upskill in role:</b> a weekend format, employer-sponsored.</li>
+    <li><b>Route C · Credential pathway:</b> credits towards an M.Tech or PhD.</li>
+  </ul>
+  <p>All three routes are judged on the same five criteria: demand, delivery cost, credibility, differentiation and ease of testing. Which route would you test first, and what result would make you drop it? Decide before you open the answer.</p>
+  <details><summary>The answer (open after you have decided)</summary>
+    <p><b>Likely lead: B · Upskill in role.</b> Employer demand is the cheapest to test, with two partner companies. A risks over-promising placements; C is credible but slow.</p>
+    <p><b>What would change it:</b> fewer than 20 sponsored sign-ups in the pilot.</p>
+  </details>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>The value is not the recommendation but the discipline: options that are genuinely different, scored on identical criteria, each with a cheap test. Asking the model for the evidence that would change its mind exposes weak recommendations quickly.</p></div>
+
+  <h3>Compare alternatives: generate genuinely different options and judge them on the same criteria</h3>
+  <p>This technique is worth the extra effort for tasks of middling complexity and above.</p>
+  <p>Use it when a decision has real trade-offs; skip it when there is one right answer.</p>
+  <table>
+    <tbody>
+      <tr><td><b>When to use it</b></td><td>Decisions with real trade-offs.</td></tr>
+      <tr><td><b>When not to</b></td><td>When there is one right answer.</td></tr>
+      <tr><td><b>Usual failure</b></td><td>Options that are variations of one idea.</td></tr>
+      <tr><td><b>Try it</b></td><td>Ask for 3 options for next year’s exam timetable, scored on the same 4 criteria.</td></tr>
+      <tr><td><b>Self-check</b></td><td>Are the options genuinely different, and judged identically?</td></tr>
+    </tbody>
+  </table>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="g7" class="concept" data-nav="· Roles and cases">
+  <p class="kicker"><span class="tag">Go deeper</span>Extends Activities 5 and 10 · Practice</p>
+  <h2>A role changes the emphasis, and a summary is not yet a decision</h2>
+  <p class="intro">These pages show what role prompting does and does not do, and how to turn a long document into a decision you can defend.</p>
+
+  <h3>Role prompting is useful, not magical</h3>
+  <p>A role sets perspective, vocabulary and priorities, as in “Act as a senior facilities planner.” It does not grant credentials, access or guaranteed expertise. Avoid inflated titles and give precise instructions instead.</p>
+  <p>You can try this as an optional activity: <a href="#o1">Two roles, one policy</a>.</p>
+
+  <h3>From document to decision: extract the evidence, test it, expose the gaps</h3>
+  <p><b>The situation:</b> The estates committee must decide on an 84-page campus solar tender. The AI extracts the claims and their evidence, tests them against our criteria and exposes the gaps before anyone decides.</p>
+  <p>A summary is not a decision. For a long document that feeds a decision, work through six steps. The example is an illustrative 84-page tender for campus solar power.</p>
+  <ol class="steps">
+    <li><b>Source document:</b> the campus solar tender, 84 pages.</li>
+    <li><b>Claims and evidence:</b> for example, “Payback 5.8 years” is a vendor estimate, on page 41.</li>
+    <li><b>Criteria:</b> a budget of no more than ₹2.4 cr, payback within 7 years, and net-metering approval.</li>
+    <li><b>Options:</b> rooftop only versus rooftop plus carport, compared on cost, output and approval risk.</li>
+    <li><b>Decision brief:</b> rooftop as phase 1, with three open questions.</li>
+    <li><b>Human review:</b> Finance and Estates verify the figures before the committee meets.</li>
+  </ol>
+  <p><b>What the criteria step caught:</b> the summary repeated the vendor’s 5.8-year payback as fact. It is the bidder’s claim, not a checked finding. This is typical: the model faithfully repeats a bidder’s claim as if it were a finding.</p>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Use this pattern for any long document that feeds a decision, such as tenders, accreditation reports and regulations. The criteria step is where you add the criteria the document will never state.</p></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="homework" data-nav="Homework">
+  <p class="kicker"><span class="tag">Homework</span>Self-study</p>
+  <h2>Do the homework at one of three levels</h2>
+  <p class="intro">Pick one level, and bring one before-and-after to your next team meeting.</p>
+  <h3>How to choose your level</h3>
+  <table>
+    <thead><tr><th>If you are…</th><th>Choose</th></tr></thead>
+    <tbody>
+      <tr><td>New to AI tools</td><td>Start at Level A.</td></tr>
+      <tr><td>Using them weekly</td><td>Try Level B.</td></tr>
+      <tr><td>Leading a team rollout</td><td>Build Level C.</td></tr>
+    </tbody>
+  </table>
+  <p>Each level builds on the last: you apply the checklist, then test reliability, then build a small workflow.</p>
+  <h3>The three levels</h3>
+  <ol class="steps">
+    <li><b>Level A · Apply.</b> Rewrite one brief you sent your team this month using the 6C checklist.<br><b>Deliver:</b> the before and after prompts, and both outputs.<br><b>Self-check:</b> score both outputs with the five checks.</li>
+    <li><b>Level B · Verify.</b> Run one judgement your office makes, such as grievance severity, 3 times in fresh chats.<br><b>Deliver:</b> the 3 answers and why they differ.<br><b>Self-check:</b> did you verify against a source or a person?</li>
+    <li><b>Level C · Build.</b> Build a 3-stage chain (Extract → Analyse → Draft) on a public document such as a UGC circular.<br><b>Deliver:</b> the 3 prompts, the hand-offs and the final draft.<br><b>Self-check:</b> is every claim traceable to the document?</li>
+  </ol>
+  <div class="callout"><p class="clabel">Take-away</p><p>Whichever level you choose, bring one before-and-after to your next team meeting. If you lead a team rollout, build Level C; if you are a leader new to these tools, start with Level A on a real team brief.</p></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+
+<section id="card" class="concept" data-nav="The 6C card">
+  <p class="kicker"><span class="tag">Printable</span>The 6C prompt card</p>
+  <h2>Use the 6C prompt card before every important prompt</h2>
+  <p class="intro">Print it and keep it next to your screen for a month. Side 1 is for briefing and checking; side 2 is the menu of nine prompt patterns.</p>
+  <h3>Side 1 · The 6C checklist: what to write in your brief</h3>
+  <table>
+    <thead><tr><th>C</th><th>Part</th><th>What to write</th></tr></thead>
+    <tbody>
+      <tr><td>C1</td><td><b>Character</b></td><td>A useful perspective for the AI to take.</td></tr>
+      <tr><td>C2</td><td><b>Context</b></td><td>The background, the audience and the inputs.</td></tr>
+      <tr><td>C3</td><td><b>Command</b></td><td>The exact task.</td></tr>
+      <tr><td>C4</td><td><b>Constraints</b></td><td>The scope, the limits and the exclusions.</td></tr>
+      <tr><td>C5</td><td><b>Composition</b></td><td>The format, length and structure of the answer.</td></tr>
+      <tr><td>C6</td><td><b>Critique</b></td><td>The checks and caveats you want included.</td></tr>
+    </tbody>
+  </table>
+  <h3>Side 1 · The five checks: what to ask of every answer</h3>
+  <table>
+    <thead><tr><th>Check</th><th>The question to ask</th></tr></thead>
+    <tbody>
+      <tr><td><b>Accuracy</b></td><td>Can its claims be verified?</td></tr>
+      <tr><td><b>Relevance</b></td><td>Does it answer the task?</td></tr>
+      <tr><td><b>Completeness</b></td><td>Is anything missing?</td></tr>
+      <tr><td><b>Traceability</b></td><td>Is it linked to sources?</td></tr>
+      <tr><td><b>Usability</b></td><td>Can people act on it?</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Better prompts improve the work. Verification protects the decision.</p>
+  <h3>Side 2 · Nine prompt patterns</h3>
+  <p>These are the same nine patterns as in <a href="#s29">Activity 9</a>. Replace the words in brackets with your own context and limits.</p>
+  <p><b>When you ask: what do I want to do with this content?</b></p>
+  <table>
+    <thead><tr><th>Pattern</th><th>Example prompt</th><th>Use it when</th></tr></thead>
+    <tbody>
+      <tr><td><b>Explain</b> (understand)</td><td><code>Explain [topic] to [audience]: one example, one misconception.</code></td><td>The reader is new to the topic.</td></tr>
+      <tr><td><b>Analyse</b> (judge)</td><td><code>Separate what the data shows, possible causes and evidence gaps.</code></td><td>You have raw data.</td></tr>
+      <tr><td><b>Compare</b> (judge)</td><td><code>Score [options] on the same [criteria]; show the trade-offs.</code></td><td>You have two or more options.</td></tr>
+      <tr><td><b>Improve</b> (strengthen)</td><td><code>Critique against [criteria], revise, then list what you changed.</code></td><td>Others will rely on the draft.</td></tr>
+      <tr><td><b>Verify</b> (check)</td><td><code>Check every claim against [source]; mark anything unverified.</code></td><td>You are about to sign or send.</td></tr>
+    </tbody>
+  </table>
+  <p><b>When you ask: I am sending a decision upward, so how do I test it first?</b></p>
+  <table>
+    <thead><tr><th>Pattern</th><th>Example prompt</th><th>Use it when</th></tr></thead>
+    <tbody>
+      <tr><td><b>Brief me</b> (understand)</td><td><code>Brief me in 5 bullets: decision, options, risks, cost, deadline.</code></td><td>You have a long paper and little time.</td></tr>
+      <tr><td><b>Find the risks</b> (judge)</td><td><code>List academic, legal, financial and student risks, and fixes.</code></td><td>You are about to commit to an option.</td></tr>
+      <tr><td><b>Red-team my draft</b> (strengthen)</td><td><code>Find the three weakest points and how a critic would attack them.</code></td><td>Others are about to read your draft.</td></tr>
+      <tr><td><b>Sceptical board member</b> (strengthen)</td><td><code>What five hard questions would a sceptical board member ask?</code></td><td>You are rehearsing for the meeting.</td></tr>
+    </tbody>
+  </table>
+  <div class="callout gold"><p class="clabel">What it means for you</p><p>Keep the card where you write prompts. Once the habit forms, the five checks matter more than the six Cs.</p></div>
+  <p class="top"><a href="#top">Back to the list</a></p>
+</section>
+</main>
+<footer><div class="wrap">The Augmented Academic · MSRUAS · Session 1 · All examples and data are synthetic.</div></footer>
+<script>
+function copyText(t){
+  if(navigator.clipboard&&window.isSecureContext){return navigator.clipboard.writeText(t).catch(function(){return fallback(t)})}
+  return Promise.resolve(fallback(t));
+}
+function fallback(t){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var ok=false;try{ok=document.execCommand('copy')}catch(e){}document.body.removeChild(a);return ok}
+document.addEventListener('click',function(e){var b=e.target.closest('button.copy');if(!b)return;
+  copyText(document.getElementById(b.dataset.target).textContent).then(function(){
+    b.textContent='Copied';b.classList.add('done');setTimeout(function(){b.textContent='Copy';b.classList.remove('done')},1500)})});
+</script>
+</body>
+</html>
